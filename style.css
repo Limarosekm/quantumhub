@@ -1,0 +1,75 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    height: 100vh;
+}
+
+/* HOME GRID */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    height: 100vh;
+}
+
+.card {
+    font-size: 2rem;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.red { background: #e74c3c; }
+.blue { background: #3498db; }
+.green { background: #2ecc71; }
+.purple { background: #9b59b6; }
+.orange { background: #e67e22; }
+.teal { background: #1abc9c; }
+
+.card:hover {
+    opacity: 0.9;
+}
+
+/* SPLIT SCREEN */
+.split {
+    display: flex;
+    height: 100vh;
+}
+
+.panel {
+    flex: 1;
+    padding: 40px;
+    color: white;
+    text-align: center;
+}
+
+.quantum {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+}
+
+.classical {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+
+.generate {
+    font-size: 1.5rem;
+    padding: 15px 30px;
+    margin: 30px 0;
+    border: none;
+    cursor: pointer;
+}
+
+.output {
+    font-size: 3rem;
+    margin-top: 20px;
+}
+
+/* HIDE */
+.hidden {
+    display: none;
+}

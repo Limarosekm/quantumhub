@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quantum RNG</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HOME SCREEN -->
+    <div id="home" class="grid">
+        <button class="card red">Random No Generation</button>
+        <button class="card blue">Password Generator</button>
+        <button class="card green">Lottery</button>
+        <button class="card purple">Encryption</button>
+        <button class="card orange">Simulation</button>
+        <button class="card teal">About RNG</button>
+    </div>
+
+    <!-- SPLIT SCREEN -->
+    <div id="rngPage" class="split hidden">
+
+        <div class="panel quantum">
+            <h2>Quantum RNG (Qiskit)</h2>
+            <button class="generate">Generate</button>
+            <div class="output" id="quantumOutput">---</div>
+        </div>
+
+        <div class="panel classical">
+            <h2>Classical RNG</h2>
+            <button class="generate">Generate</button>
+            <div class="output" id="classicalOutput">---</div>
+        </div>
+
+    </div>
+
+<script src="script.js"></script>
+</body>
+</html>

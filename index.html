@@ -4,35 +4,62 @@
     <meta charset="UTF-8">
     <title>Quantum RNG</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-    <!-- HOME SCREEN -->
-    <div id="home" class="grid">
-        <button class="card red">Random No Generation</button>
-        <button class="card blue">Password Generator</button>
-        <button class="card green">Lottery</button>
-        <button class="card purple">Encryption</button>
-        <button class="card orange">Simulation</button>
-        <button class="card teal">About RNG</button>
+<!-- ================= HOME SCREEN ================= -->
+<div id="home" class="grid">
+    <button class="card red">Random No Generation</button>
+    <button class="card blue">Password Generator</button>
+    <button class="card green">Lottery</button>
+    <button class="card purple">Encryption</button>
+    <button class="card orange">Simulation</button>
+    <button class="card teal">About RNG</button>
+</div>
+
+<!-- ================= SPLIT SCREEN ================= -->
+<div id="rngPage" class="split hidden">
+    <button id="backBtn">← Back</button>
+    <button id="analyzeBtn">📊 Analyze</button>
+
+    <div class="panel quantum">
+        <h2>Quantum RNG (Qiskit)</h2>
+        <button class="generate">Generate</button>
+        <div class="output" id="quantumOutput">---</div>
     </div>
 
-    <!-- SPLIT SCREEN -->
-    <div id="rngPage" class="split hidden">
+    <div class="panel classical">
+        <h2>Classical RNG</h2>
+        <button class="generate">Generate</button>
+        <div class="output" id="classicalOutput">---</div>
+    </div>
+</div>
 
-        <div class="panel quantum">
+<!-- ================= ANALYSIS PAGE ================= -->
+<div id="analysisPage" class="analysis hidden">
+
+    <button id="analysisBackBtn">← Back</button>
+
+    <h1>Randomness Analysis (Last 15 Values)</h1>
+
+    <div class="analysis-container">
+
+        <div class="analysis-card">
+            <h2>Classical RNG (LCG)</h2>
+            <canvas id="classicalChart"></canvas>
+            <p id="classicalEntropy"></p>
+        </div>
+
+        <div class="analysis-card">
             <h2>Quantum RNG (Qiskit)</h2>
-            <button class="generate">Generate</button>
-            <div class="output" id="quantumOutput">---</div>
-        </div>
-
-        <div class="panel classical">
-            <h2>Classical RNG</h2>
-            <button class="generate">Generate</button>
-            <div class="output" id="classicalOutput">---</div>
+            <canvas id="quantumChart"></canvas>
+            <p id="quantumEntropy"></p>
         </div>
 
     </div>
+</div>
 
 <script src="script.js"></script>
 </body>

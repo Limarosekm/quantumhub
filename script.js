@@ -162,3 +162,4 @@ function renderAnalysis() {
     document.getElementById("quantumEntropy").innerText =
         "Entropy: " + entropy(quantumHistory);
 }
+l

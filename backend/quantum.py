@@ -1,25 +1,53 @@
 # quantum.py
-from qiskit import QuantumCircuit
-from qiskit_aer import AerSimulator
 
-def quantum_random_number(bits=8):
+from qiskit import QuantumCircuit, transpile
+from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2 as Sampler
+import os
+import random
+
+# Connect once when file loads
+service = QiskitRuntimeService(
+    channel="ibm_quantum_platform",
+    token=os.environ.get("IBM_TOKEN"),
+    instance="open-instance"
+)
+
+backend = service.least_busy(simulator=False, operational=True)
+
+
+def quantum_random_numbers(count=10000):
     """
-    Generates a quantum random number using superposition
+    Generate 'count' quantum random numbers using real IBM hardware
     """
 
-    qc = QuantumCircuit(bits, bits)
+    qc = QuantumCircuit(8, 8)
 
-    # Put all qubits into superposition
-    for i in range(bits):
+    # Put qubits in superposition
+    for i in range(8):
         qc.h(i)
 
-    # Measure all qubits
-    qc.measure(range(bits), range(bits))
+    qc.measure(range(8), range(8))
 
-    simulator = AerSimulator()
-    result = simulator.run(qc, shots=1).result()
-    counts = result.get_counts()
+    # Transpile for real backend
+    qc_transpiled = transpile(qc, backend)
 
-    bitstring = list(counts.keys())[0]
+    # Run ONE job with 'count' shots
+    sampler = Sampler(backend)
+    job = sampler.run([qc_transpiled], shots=count)
 
-    return int(bitstring, 2)
+    print(f"Job submitted: {job.job_id()}")
+    print("Waiting for IBM hardware...")
+
+    result = job.result()
+    counts = result[0].data.c.get_counts()
+
+    numbers = []
+
+    for bitstring, freq in counts.items():
+        number = int(bitstring, 2)
+        numbers.extend([number] * freq)
+
+    # 🔥 IMPORTANT FIX — restore randomness order
+    random.shuffle(numbers)
+
+    return numbers

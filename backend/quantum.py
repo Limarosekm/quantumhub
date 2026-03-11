@@ -8,14 +8,14 @@ import random
 # Connect once when file loads
 service = QiskitRuntimeService(
     channel="ibm_quantum_platform",
-    token=os.environ.get("IBM_TOKEN"),
+    token=os.environ.get("a4Rw0bL_-p7iPFKH0zoO93BBbLdPDM94LAOawztpTSNm"),
     instance="open-instance"
 )
 
 backend = service.least_busy(simulator=False, operational=True)
 
 
-def quantum_random_numbers(count=10000):
+def quantum_random_numbers(count=500):
     """
     Generate 'count' quantum random numbers using real IBM hardware
     """

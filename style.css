@@ -7,34 +7,96 @@
 }
 
 body {
-    height: 100vh;
-    overflow: hidden;
+    body {
+    min-height: 100vh;
+    overflow-y: auto;
+};
 }
+.app-title {
 
+    position:absolute;
+    top:30px;
+
+    width:100%;
+
+    text-align:center;
+
+    font-size:2.2rem;
+
+    color:white;
+
+    letter-spacing:1px;
+}
 /* ================== HOME GRID ================== */
 .grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(3,1fr);
+    gap: 25px;
+    padding: 80px 40px;
     height: 100vh;
+
+    background: linear-gradient(135deg,#141e30,#243b55);
 }
 
 .card {
-    font-size: 2rem;
+
+    font-size: 1.4rem;
     color: white;
+
     border: none;
+    border-radius: 18px;
+
+    padding: 30px;
+
     cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    transition: 0.3s;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
 }
 
-.red { background: #e74c3c; }
-.blue { background: #3498db; }
-.green { background: #2ecc71; }
-.purple { background: #9b59b6; }
-.orange { background: #e67e22; }
-.teal { background: #1abc9c; }
+.red {
+    background: linear-gradient(135deg,#ff416c,#ff4b2b);
+}
+
+.blue {
+    background: linear-gradient(135deg,#36d1dc,#5b86e5);
+}
+
+.green {
+    background: linear-gradient(135deg,#56ab2f,#a8e063);
+}
+
+.purple {
+    background: linear-gradient(135deg,#8e2de2,#4a00e0);
+}
+
+.orange {
+    background: linear-gradient(135deg,#f7971e,#ffd200);
+}
+
+.teal {
+    background: linear-gradient(135deg,#11998e,#38ef7d);
+}
 
 .card:hover {
-    opacity: 0.9;
+
+    transform: translateY(-10px) scale(1.05);
+
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+.controls{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin:20px 0;
 }
 
 /* ================== SPLIT SCREEN ================== */
@@ -66,12 +128,50 @@ body {
     border: none;
     cursor: pointer;
 }
+.generate{
 
-.output {
-    font-size: 3rem;
-    margin-top: 20px;
+    font-size:1.2rem;
+    padding:12px 28px;
+
+    border:none;
+    border-radius:8px;
+
+    background:white;
+    color:#333;
+
+    cursor:pointer;
+
+    transition:0.25s;
 }
 
+.generate:hover{
+
+    transform:scale(1.05);
+    box-shadow:0 8px 20px rgba(0,0,0,0.3);
+}
+
+.toggleMode{
+
+    padding:10px 18px;
+
+    border:none;
+    border-radius:6px;
+
+    background:#ffffffcc;
+
+    cursor:pointer;
+}
+.output{
+
+    font-size:1.3rem;
+
+    letter-spacing:2px;
+
+    text-align:center;
+
+    word-wrap:break-word;
+
+}
 /* ================== BUTTONS ================== */
 #backBtn {
     position: absolute;
@@ -105,7 +205,7 @@ body {
     background: radial-gradient(circle, #1e1e2f, #0f0f1a);
     color: white;
 
-    z-index: 10;
+    overflow-y: auto;   /* THIS ENABLES SCROLL */
 }
 
 .analysis h1 {
@@ -149,4 +249,123 @@ canvas {
 /* ================== UTILITIES ================== */
 .hidden {
     display: none;
+}
+
+#downloadExcelBtn {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    z-index: 5;
+}
+.numbers-box{
+
+    margin-top:25px;
+
+    padding:18px;
+
+    border-radius:12px;
+
+    background:rgba(0,0,0,0.15);
+
+    backdrop-filter:blur(10px);
+
+}
+
+.toggleMode{
+    padding: 8px 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.output{
+    font-size: 1rem;
+    word-wrap: break-word;
+    font-family: monospace;
+}
+#bitGrid {
+    display: grid;
+    grid-template-columns: repeat(64, 6px);
+    gap: 1px;
+    margin-top: 10px;
+}
+.bit {
+    width: 6px;
+    height: 6px;
+}
+.top-controls{
+
+    position:absolute;
+
+    top:20px;
+    left:20px;
+    right:20px;
+
+    display:flex;
+    justify-content:space-between;
+}
+
+/*spread*/
+
+
+.spread{
+
+position:fixed;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+
+background:linear-gradient(135deg,#1f4037,#99f2c8);
+
+padding:40px;
+
+color:white;
+
+overflow:auto;
+}
+
+.spread-container{
+
+display:flex;
+gap:30px;
+
+margin-top:40px;
+
+}
+
+.spread-card{
+
+flex:1;
+
+background:rgba(255,255,255,0.1);
+
+padding:25px;
+
+border-radius:15px;
+
+text-align:center;
+
+box-shadow:0 10px 25px rgba(0,0,0,0.4);
+
+}
+
+.spread-card button{
+
+margin-top:15px;
+
+padding:10px 20px;
+
+border:none;
+
+border-radius:8px;
+
+cursor:pointer;
+
+background:white;
+
+color:#333;
+
 }

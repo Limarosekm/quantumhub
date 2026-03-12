@@ -8,57 +8,167 @@
 </head>
 
 <body>
-
+<h1 class="app-title">Quantum vs Classical Randomness Lab</h1>
 <!-- ================= HOME SCREEN ================= -->
 <div id="home" class="grid">
-    <button class="card red">Random No Generation</button>
-    <button class="card blue">Password Generator</button>
-    <button class="card green">Lottery</button>
-    <button class="card purple">Encryption</button>
-    <button class="card orange">Simulation</button>
-    <button class="card teal">About RNG</button>
+    
+
+<button class="card red">🎲 RNG Lab</button>
+
+<button class="card blue">🔑 Password Generator</button>
+
+<button class="card green">🎰 Lottery Generator</button>
+
+<button class="card purple">🔐 Cryptography Demo</button>
+
+<button class="card orange" id="spreadBtn">📡 Spreading Demo</button>
+
+<button class="card teal">ℹ About Project</button>
+
+
 </div>
 
 <!-- ================= SPLIT SCREEN ================= -->
 <div id="rngPage" class="split hidden">
-    <button id="backBtn">← Back</button>
-    <button id="analyzeBtn">📊 Analyze</button>
+    <div class="top-controls">
+
+<button id="backBtn">← Back</button>
+
+<div>
+<button id="analyzeBtn">📊 Analyze</button>
+<button id="downloadExcelBtn">📥 Excel</button>
+</div>
+
+</div>
 
     <div class="panel quantum">
-        <h2>Quantum RNG (Qiskit)</h2>
-        <button class="generate">Generate</button>
+
+    <h2>Quantum RNG (Qiskit)</h2>
+
+    <div class="controls">
+        <button class="generate">⚡ Generate</button>
+        <button class="toggleMode" id="quantumToggle">Binary</button>
+    </div>
+
+    <div class="numbers-box">
         <div class="output" id="quantumOutput">---</div>
     </div>
 
+</div>
     <div class="panel classical">
-        <h2>Classical RNG</h2>
-        <button class="generate">Generate</button>
+
+    <h2>Classical RNG</h2>
+
+    <div class="controls">
+        <button class="generate">⚡ Generate</button>
+        <button class="toggleMode" id="classicalToggle">Binary</button>
+    </div>
+
+    <div class="numbers-box">
         <div class="output" id="classicalOutput">---</div>
     </div>
+
+</div>
+</div>
+<!-- ================= SPREADING PAGE ================= -->
+
+<div id="spreadPage" class="spread hidden">
+
+<button id="spreadBackBtn">← Back</button>
+
+<h1>Spreading & Despreading Demo</h1>
+
+<div class="spread-container">
+
+<div class="spread-card">
+
+<h2>Message</h2>
+<p id="messageBits">---</p>
+
+<button id="generateMessageBtn">Generate Message</button>
+
 </div>
 
+<div class="spread-card">
+
+<h2>Classical Spreading</h2>
+
+<p>Code:</p>
+<p id="classicalCode">---</p>
+
+<p>Spread Signal:</p>
+<p id="classicalSpread">---</p>
+
+<p>Recovered Message:</p>
+<p id="classicalRecovered">---</p>
+
+<p>Error Rate:</p>
+<p id="classicalError">---</p>
+
+<button id="runClassicalSpread">Run Classical</button>
+
+</div>
+
+<div class="spread-card">
+
+<h2>Quantum Spreading</h2>
+
+<p>Code:</p>
+<p id="quantumCode">---</p>
+
+<p>Spread Signal:</p>
+<p id="quantumSpread">---</p>
+
+<p>Recovered Message:</p>
+<p id="quantumRecovered">---</p>
+
+<p>Error Rate:</p>
+<p id="quantumError">---</p>
+
+<button id="runQuantumSpread">Run Quantum</button>
+
+</div>
+
+</div>
+
+</div>
 <!-- ================= ANALYSIS PAGE ================= -->
 <div id="analysisPage" class="analysis hidden">
 
     <button id="analysisBackBtn">← Back</button>
 
-    <h1>Randomness Analysis (Last 15 Values)</h1>
+    <h1>Randomness Analysis </h1>
 
     <div class="analysis-container">
 
-        <div class="analysis-card">
-            <h2>Classical RNG (LCG)</h2>
-            <canvas id="classicalChart"></canvas>
-            <p id="classicalEntropy"></p>
-        </div>
-
-        <div class="analysis-card">
-            <h2>Quantum RNG (Qiskit)</h2>
-            <canvas id="quantumChart"></canvas>
-            <p id="quantumEntropy"></p>
-        </div>
-
+    <div class="analysis-card">
+        <h2>Classical RNG (LCG)</h2>
+        <canvas id="classicalChart"></canvas>
+        <p id="classicalEntropy"></p>
     </div>
+
+    <div class="analysis-card">
+        <h2>Quantum RNG (Qiskit)</h2>
+        <canvas id="quantumChart"></canvas>
+        <p id="quantumEntropy"></p>
+    </div>
+
+    <div class="analysis-card">
+        <h2>Bit Frequency Comparison</h2>
+        <canvas id="bitFrequencyChart"></canvas>
+    </div>
+
+    <div class="analysis-card">
+        <h2>Metrics Comparison</h2>
+        <canvas id="metricsChart"></canvas>
+    </div>
+
+</div>
+
+<div class="analysis-card">
+    <h2>Bitstream Visualization</h2>
+    <div id="bitGrid"></div>
+</div>
 </div>
 
 <script src="script.js"></script>

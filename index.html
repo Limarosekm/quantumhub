@@ -1,175 +1,428 @@
+
+AI Overview
+Code implements a Quantum vs Classical RNG web application comparing results via analysis charts and supporting a lottery simulation.
+
+Introducing conversation history
+From now on, you can view and resume your saved conversations in the History section.
+Gemini
+Ask about your files
+Summarize this folder
+Analyze each file in this folder
+What can Gemini do with folders in Google Drive
+Gemini in Workspace can make mistakes. Learn more
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Quantum RNG</title>
+    <title>Quantum RNG Lab</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
-<h1 class="app-title">Quantum vs Classical Randomness Lab</h1>
+
+<!-- ================= MILKY WAY CANVAS ================= -->
+<canvas id="galaxyCanvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></canvas>
+
 <!-- ================= HOME SCREEN ================= -->
-<div id="home" class="grid">
-    
+<div id="home">
 
-<button class="card red">🎲 RNG Lab</button>
+    <h1 class="app-title">Quantum vs Classical Randomness Lab</h1>
 
-<button class="card blue">🔑 Password Generator</button>
+    <div class="grid">
 
-<button class="card green">🎰 Lottery Generator</button>
+        <button class="card red" id="rngBtn">
+            <span class="card-emoji">🎲</span>
+            <span class="card-label">RNG Lab</span>
+        </button>
 
-<button class="card purple">🔐 Cryptography Demo</button>
+        <button class="card blue" id="passwordBtn">
+            <span class="card-emoji">🔑</span>
+            <span class="card-label">Password Generator</span>
+        </button>
 
-<button class="card orange" id="spreadBtn">📡 Spreading Demo</button>
+        <button class="card green" id="lotteryHomeBtn">
+            <span class="card-emoji">🎰</span>
+            <span class="card-label">Lottery Generator</span>
+        </button>
 
-<button class="card teal">ℹ About Project</button>
+        <button class="card purple" id="cryptoBtn">
+            <span class="card-emoji">🔐</span>
+            <span class="card-label">Cryptography Demo</span>
+        </button>
 
+        <button class="card orange" id="spreadBtn">
+            <span class="card-emoji">📡</span>
+            <span class="card-label">Spreading Demo</span>
+        </button>
 
+        <button class="card teal" id="aboutBtn">
+            <span class="card-emoji">ℹ️</span>
+            <span class="card-label">About Project</span>
+        </button>
+
+    </div>
 </div>
 
 <!-- ================= SPLIT SCREEN ================= -->
 <div id="rngPage" class="split hidden">
     <div class="top-controls">
-
-<button id="backBtn">← Back</button>
-
-<div>
-<button id="analyzeBtn">📊 Analyze</button>
-<button id="downloadExcelBtn">📥 Excel</button>
-</div>
-
-</div>
+        <button id="backBtn">← Back</button>
+        <div>
+            <button id="analyzeBtn">📊 Analyze</button>
+            <button id="downloadExcelBtn">📥 Excel</button>
+        </div>
+    </div>
 
     <div class="panel quantum">
-
-    <h2>Quantum RNG (Qiskit)</h2>
-
-    <div class="controls">
-        <button class="generate">⚡ Generate</button>
-        <button class="toggleMode" id="quantumToggle">Binary</button>
+        <h2>Quantum RNG (Qiskit)</h2>
+        <div class="controls">
+            <button class="generate">⚡ Generate</button>
+            <button class="toggleMode" id="quantumToggle">Binary</button>
+        </div>
+        <div class="numbers-box">
+            <div class="output" id="quantumOutput">---</div>
+        </div>
     </div>
 
-    <div class="numbers-box">
-        <div class="output" id="quantumOutput">---</div>
-    </div>
-
-</div>
     <div class="panel classical">
-
-    <h2>Classical RNG</h2>
-
-    <div class="controls">
-        <button class="generate">⚡ Generate</button>
-        <button class="toggleMode" id="classicalToggle">Binary</button>
+        <h2>Classical RNG</h2>
+        <div class="controls">
+            <button class="generate">⚡ Generate</button>
+            <button class="toggleMode" id="classicalToggle">Binary</button>
+        </div>
+        <div class="numbers-box">
+            <div class="output" id="classicalOutput">---</div>
+        </div>
     </div>
-
-    <div class="numbers-box">
-        <div class="output" id="classicalOutput">---</div>
-    </div>
-
 </div>
-</div>
+
 <!-- ================= SPREADING PAGE ================= -->
-
 <div id="spreadPage" class="spread hidden">
-
-<button id="spreadBackBtn">← Back</button>
-
-<h1>Spreading & Despreading Demo</h1>
-
-<div class="spread-container">
-
-<div class="spread-card">
-
-<h2>Message</h2>
-<p id="messageBits">---</p>
-
-<button id="generateMessageBtn">Generate Message</button>
-
+    <button id="spreadBackBtn">← Back</button>
+    <h1>Spreading &amp; Despreading Demo</h1>
+    <div class="spread-container">
+        <div class="spread-card">
+            <h2>Message</h2>
+            <p id="messageBits">---</p>
+            <button id="generateMessageBtn">Generate Message</button>
+        </div>
+        <div class="spread-card">
+            <h2>Classical Spreading</h2>
+            <p>Code:</p><p id="classicalCode">---</p>
+            <p>Spread Signal:</p><p id="classicalSpread">---</p>
+            <p>Recovered Message:</p><p id="classicalRecovered">---</p>
+            <p>Error Rate:</p><p id="classicalError">---</p>
+            <button id="runClassicalSpread">Run Classical</button>
+        </div>
+        <div class="spread-card">
+            <h2>Quantum Spreading</h2>
+            <p>Code:</p><p id="quantumCode">---</p>
+            <p>Spread Signal:</p><p id="quantumSpread">---</p>
+            <p>Recovered Message:</p><p id="quantumRecovered">---</p>
+            <p>Error Rate:</p><p id="quantumError">---</p>
+            <button id="runQuantumSpread">Run Quantum</button>
+        </div>
+    </div>
 </div>
 
-<div class="spread-card">
-
-<h2>Classical Spreading</h2>
-
-<p>Code:</p>
-<p id="classicalCode">---</p>
-
-<p>Spread Signal:</p>
-<p id="classicalSpread">---</p>
-
-<p>Recovered Message:</p>
-<p id="classicalRecovered">---</p>
-
-<p>Error Rate:</p>
-<p id="classicalError">---</p>
-
-<button id="runClassicalSpread">Run Classical</button>
-
-</div>
-
-<div class="spread-card">
-
-<h2>Quantum Spreading</h2>
-
-<p>Code:</p>
-<p id="quantumCode">---</p>
-
-<p>Spread Signal:</p>
-<p id="quantumSpread">---</p>
-
-<p>Recovered Message:</p>
-<p id="quantumRecovered">---</p>
-
-<p>Error Rate:</p>
-<p id="quantumError">---</p>
-
-<button id="runQuantumSpread">Run Quantum</button>
-
-</div>
-
-</div>
-
-</div>
 <!-- ================= ANALYSIS PAGE ================= -->
 <div id="analysisPage" class="analysis hidden">
-
     <button id="analysisBackBtn">← Back</button>
-
-    <h1>Randomness Analysis </h1>
-
+    <h1>Randomness Analysis</h1>
     <div class="analysis-container">
-
-    <div class="analysis-card">
-        <h2>Classical RNG (LCG)</h2>
-        <canvas id="classicalChart"></canvas>
-        <p id="classicalEntropy"></p>
+        <div class="analysis-card">
+            <h2>Classical RNG (LCG)</h2>
+            <canvas id="classicalChart"></canvas>
+            <p id="classicalEntropy"></p>
+        </div>
+        <div class="analysis-card">
+            <h2>Quantum RNG (Qiskit)</h2>
+            <canvas id="quantumChart"></canvas>
+            <p id="quantumEntropy"></p>
+        </div>
+        <div class="analysis-card">
+            <h2>Bit Frequency Comparison</h2>
+            <canvas id="bitFrequencyChart"></canvas>
+        </div>
+        <div class="analysis-card">
+            <h2>Metrics Comparison</h2>
+            <canvas id="metricsChart"></canvas>
+        </div>
     </div>
-
     <div class="analysis-card">
-        <h2>Quantum RNG (Qiskit)</h2>
-        <canvas id="quantumChart"></canvas>
-        <p id="quantumEntropy"></p>
+        <h2>Bitstream Visualization</h2>
+        <div id="bitGrid"></div>
     </div>
-
-    <div class="analysis-card">
-        <h2>Bit Frequency Comparison</h2>
-        <canvas id="bitFrequencyChart"></canvas>
-    </div>
-
-    <div class="analysis-card">
-        <h2>Metrics Comparison</h2>
-        <canvas id="metricsChart"></canvas>
-    </div>
-
 </div>
 
-<div class="analysis-card">
-    <h2>Bitstream Visualization</h2>
-    <div id="bitGrid"></div>
+<!-- ================= LOTTERY PAGE ================= -->
+<div id="lotteryPage" class="lottery hidden">
+    <button id="lotteryBackBtn">← Back</button>
+    <button id="lotteryAnalyzeBtn">📊 Analyze Lottery Results</button>
+    <h1>🎰 Lottery Generator</h1>
+    <p class="lottery-subtitle">Gravity Ball Pick Machine Simulation</p>
+    <div class="lottery-container">
+        <div class="lottery-box">
+            <h2>🖥️ Classical RNG</h2>
+            <button id="generateClassicalLottery">▶ Start Machine</button>
+            <div class="machine-wrapper">
+                <canvas id="classicalMachineCanvas" width="280" height="220"></canvas>
+            </div>
+            <div class="numbers-list-label">Generated Tickets</div>
+            <div class="lottery-numbers-grid" id="classicalNumbersList"></div>
+        </div>
+        <div class="lottery-box">
+            <h2>⚛️ Quantum RNG</h2>
+            <button id="generateQuantumLottery">▶ Start Machine</button>
+            <div class="machine-wrapper">
+                <canvas id="quantumMachineCanvas" width="280" height="220"></canvas>
+            </div>
+            <div class="numbers-list-label">Generated Tickets</div>
+            <div class="lottery-numbers-grid" id="quantumNumbersList"></div>
+        </div>
+    </div>
 </div>
-</div>
+
+<!-- ================= HOME SCREEN SCRIPTS ================= -->
+<script>
+// ---- Starfield ----
+(function() {
+    const canvas = document.getElementById('galaxyCanvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, mouse = { x: 0.5, y: 0.5 }, targetMouse = { x: 0.5, y: 0.5 };
+
+    // ---- Resize ----
+    function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', () => { resize(); buildScene(); });
+
+    // ---- Mouse parallax (only on home screen) ----
+    document.addEventListener('mousemove', e => {
+        targetMouse.x = e.clientX / W;
+        targetMouse.y = e.clientY / H;
+    });
+
+    // ---- Star layers (3 depths for parallax) ----
+    let layers = [];
+    function buildScene() {
+        layers = [];
+        const counts = [320, 180, 80];   // far, mid, near
+        const sizes  = [[0.4,1.1],[0.8,1.8],[1.4,2.8]];
+        const speeds = [0.006, 0.014, 0.025];
+        const colors = [
+            ['#ffffff','#cce8ff','#ffeedd','#e8ccff','#ffffff','#ffffff'],
+            ['#ffffff','#aad4ff','#ffd8aa','#d4aaff','#ffffff'],
+            ['#ffffff','#88ccff','#ffccaa','#cc88ff']
+        ];
+        for (let l = 0; l < 3; l++) {
+            const stars = [];
+            for (let i = 0; i < counts[l]; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const dist  = Math.random();
+                const inBand = Math.random() < 0.55;
+                let x, y;
+                if (inBand) {
+                    // concentrate along a diagonal milky-way band
+                    const t = Math.random();
+                    const bx = 0.15 + t * 0.7;
+                    const by = 0.7  - t * 0.5;
+                    x = bx + (Math.random() - 0.5) * 0.28;
+                    y = by + (Math.random() - 0.5) * 0.22;
+                } else {
+                    x = Math.random();
+                    y = Math.random();
+                }
+                const [sMin, sMax] = sizes[l];
+                stars.push({
+                    bx: x, by: y,    // base position (0-1)
+                    r: sMin + Math.random() * (sMax - sMin),
+                    color: colors[l][Math.floor(Math.random() * colors[l].length)],
+                    twinklePhase: Math.random() * Math.PI * 2,
+                    twinkleSpeed: 0.4 + Math.random() * 1.2,
+                    baseAlpha: 0.35 + Math.random() * 0.65,
+                    speed: speeds[l]
+                });
+            }
+            layers.push(stars);
+        }
+    }
+    buildScene();
+
+    // ---- Shooting stars ----
+    let shooters = [];
+    function spawnShooter() {
+        shooters.push({
+            x: Math.random() * W * 0.8,
+            y: Math.random() * H * 0.3,
+            len: 90 + Math.random() * 120,
+            vx: 3.5 + Math.random() * 3,
+            vy: 1.2 + Math.random() * 2,
+            alpha: 1,
+            life: 1
+        });
+    }
+    setInterval(() => { if (Math.random() < 0.45) spawnShooter(); }, 1800);
+
+    // ---- Nebula blobs (pre-built offscreen) ----
+    const nebulaCanvas = document.createElement('canvas');
+    function buildNebula() {
+        nebulaCanvas.width  = W;
+        nebulaCanvas.height = H;
+        const nc = nebulaCanvas.getContext('2d');
+        const blobs = [
+            { cx: 0.18, cy: 0.20, rx: 0.38, ry: 0.22, angle: -0.4, r:100, g:60,  b:240, a: 0.10 },
+            { cx: 0.72, cy: 0.62, rx: 0.32, ry: 0.20, angle:  0.3, r: 0,  g:160, b:255, a: 0.09 },
+            { cx: 0.50, cy: 0.50, rx: 0.50, ry: 0.28, angle: -0.2, r:180, g:80,  b:255, a: 0.07 }, // core
+            { cx: 0.30, cy: 0.75, rx: 0.25, ry: 0.18, angle:  0.5, r:255, g:80,  b:180, a: 0.08 },
+            { cx: 0.80, cy: 0.20, rx: 0.22, ry: 0.15, angle: -0.6, r: 60, g:200, b:255, a: 0.07 },
+        ];
+        blobs.forEach(b => {
+            nc.save();
+            nc.translate(b.cx * W, b.cy * H);
+            nc.rotate(b.angle);
+            nc.scale(b.rx * W / 100, b.ry * H / 100);
+            const g = nc.createRadialGradient(0, 0, 0, 0, 0, 100);
+            g.addColorStop(0,   `rgba(${b.r},${b.g},${b.b},${b.a})`);
+            g.addColorStop(0.5, `rgba(${b.r},${b.g},${b.b},${b.a * 0.4})`);
+            g.addColorStop(1,   `rgba(${b.r},${b.g},${b.b},0)`);
+            nc.fillStyle = g;
+            nc.beginPath();
+            nc.arc(0, 0, 100, 0, Math.PI * 2);
+            nc.fill();
+            nc.restore();
+        });
+
+        // galactic core bright center
+        const core = nc.createRadialGradient(W*0.5, H*0.48, 0, W*0.5, H*0.48, W*0.18);
+        core.addColorStop(0,   'rgba(255,240,200,0.13)');
+        core.addColorStop(0.4, 'rgba(200,160,255,0.07)');
+        core.addColorStop(1,   'rgba(0,0,0,0)');
+        nc.fillStyle = core;
+        nc.fillRect(0, 0, W, H);
+    }
+    buildNebula();
+    window.addEventListener('resize', buildNebula);
+
+    // ---- Render loop ----
+    let t = 0;
+    function draw() {
+        requestAnimationFrame(draw);
+        t += 0.016;
+
+        // smooth mouse follow
+        mouse.x += (targetMouse.x - mouse.x) * 0.04;
+        mouse.y += (targetMouse.y - mouse.y) * 0.04;
+
+        // Sky gradient
+        const bg = ctx.createLinearGradient(0, 0, W * 0.6, H);
+        bg.addColorStop(0,   '#08112a');
+        bg.addColorStop(0.3, '#0c1535');
+        bg.addColorStop(0.6, '#120920');
+        bg.addColorStop(1,   '#0a1428');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        // Nebula layer
+        ctx.drawImage(nebulaCanvas, 0, 0);
+
+        // Stars with parallax
+        layers.forEach((stars, li) => {
+            const parallax = [0.012, 0.028, 0.05][li];
+            stars.forEach(s => {
+                const px = s.bx * W + (mouse.x - 0.5) * W * parallax;
+                const py = s.by * H + (mouse.y - 0.5) * H * parallax;
+                const tw = Math.sin(t * s.twinkleSpeed + s.twinklePhase) * 0.5 + 0.5;
+                const alpha = s.baseAlpha * (0.55 + 0.45 * tw);
+
+                ctx.beginPath();
+                ctx.arc(px, py, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = s.color;
+                ctx.globalAlpha = alpha;
+                ctx.fill();
+
+                // subtle cross-bloom on brighter near stars
+                if (li === 2 && s.r > 2) {
+                    ctx.globalAlpha = alpha * 0.18;
+                    ctx.strokeStyle = s.color;
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(px - s.r * 3, py); ctx.lineTo(px + s.r * 3, py);
+                    ctx.moveTo(px, py - s.r * 3); ctx.lineTo(px, py + s.r * 3);
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1;
+            });
+        });
+
+        // Shooting stars
+        shooters = shooters.filter(s => s.life > 0);
+        shooters.forEach(s => {
+            s.x += s.vx * 2.2;
+            s.y += s.vy * 2.2;
+            s.life -= 0.022;
+            const alpha = Math.max(0, s.life);
+            const grad = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * s.len * 0.5, s.y - s.vy * s.len * 0.5);
+            grad.addColorStop(0,   `rgba(255,255,255,${alpha})`);
+            grad.addColorStop(0.3, `rgba(180,220,255,${alpha * 0.5})`);
+            grad.addColorStop(1,   'rgba(255,255,255,0)');
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(s.x - s.vx * s.len * 0.5, s.y - s.vy * s.len * 0.5);
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 1;
+            ctx.stroke();
+        });
+    }
+    draw();
+})();
+
+// ---- Ripple on card click ----
+document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', function(e) {
+        const r = document.createElement('span');
+        r.className = 'ripple';
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+        this.appendChild(r);
+        setTimeout(() => r.remove(), 560);
+    });
+});
+
+// ---- Wire home nav using new IDs ----
+const homeEl = document.getElementById('home');
+
+document.getElementById('rngBtn').addEventListener('click', () => {
+    document.querySelector('.quantum h2').innerText = 'Quantum RNG (Qiskit)';
+    document.querySelector('.classical h2').innerText = 'Classical RNG';
+    homeEl.classList.add('hidden');
+    document.getElementById('rngPage').classList.remove('hidden');
+    window.currentMode = 'rng';
+});
+
+document.getElementById('passwordBtn').addEventListener('click', () => {
+    document.querySelector('.quantum h2').innerText = 'Quantum Password Generator';
+    document.querySelector('.classical h2').innerText = 'Classical Password Generator';
+    homeEl.classList.add('hidden');
+    document.getElementById('rngPage').classList.remove('hidden');
+    window.currentMode = 'password';
+});
+
+document.getElementById('lotteryHomeBtn').addEventListener('click', () => {
+    homeEl.classList.add('hidden');
+    document.getElementById('lotteryPage').classList.remove('hidden');
+});
+
+document.getElementById('spreadBtn').addEventListener('click', () => {
+    homeEl.classList.add('hidden');
+    document.getElementById('spreadPage').classList.remove('hidden');
+});
+</script>
 
 <script src="script.js"></script>
 </body>

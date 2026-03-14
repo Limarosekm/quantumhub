@@ -1,3 +1,4 @@
+
 // ================== DOM REFERENCES ==================
 const home = document.getElementById("home");
 const rngPage = document.getElementById("rngPage");
@@ -8,12 +9,18 @@ const classicalOutput = document.getElementById("classicalOutput");
 
 const analysisBackBtn = document.getElementById("analysisBackBtn");
 
+const lotteryBackBtn = document.getElementById("lotteryBackBtn");
+// LOTTERY DOM
+
+
 // ================== DATA STORAGE ==================
 let classicalHistory = [];
 let quantumHistory = [];
 
 let classicalBinary = [];
 let quantumBinary = [];
+
+const MAX_HISTORY = 15;
 
 let classicalBinaryMode = false;
 let quantumBinaryMode = false;
@@ -22,7 +29,8 @@ let currentMode = "rng";
 
 // ================== NAVIGATION ==================
 
-document.querySelector(".red").onclick = () => {
+// nav handled inline
+document.getElementById("rngBtn") && (document.getElementById("rngBtn").onclick = null); function unused_red() {
     currentMode = "rng";
 
     document.querySelector(".quantum h2").innerText = "Quantum RNG (Qiskit)";
@@ -32,7 +40,7 @@ document.querySelector(".red").onclick = () => {
     rngPage.classList.remove("hidden");
 };
 
-document.querySelector(".blue").onclick = () => {
+function unused_blue() {
     currentMode = "password";
 
     document.querySelector(".quantum h2").innerText = "Quantum Password Generator";
@@ -222,6 +230,388 @@ function autocorrelation(data){
     return (numerator/denominator).toFixed(6);
 }
 
+// ================== LOTTERY PAGE NAVIGATION ==================
+const lotteryPage = document.getElementById("lotteryPage");
+const lotteryBtn = document.getElementById("lotteryHomeBtn") || document.querySelector(".green");
+
+lotteryBtn.onclick = () => {
+    home.classList.add("hidden");
+    lotteryPage.classList.remove("hidden");
+};
+
+lotteryBackBtn.onclick = () => {
+    lotteryPage.classList.add("hidden");
+    home.classList.remove("hidden");
+};
+
+// ================== GRAVITY BALL MACHINE CLASS ==================
+class GravityMachine {
+    constructor(canvasId, color) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext("2d");
+        this.W = this.canvas.width;
+        this.H = this.canvas.height;
+        this.color = color;
+        this.balls = [];
+        this.animId = null;
+        this.running = false;
+        this.pickedNumber = null;
+
+        this.tubeX = this.W / 2;
+        this.tubeY = this.H - 18;
+        this.tubeW = 26;
+        this.tubeH = 40;
+    }
+
+    initBalls(count = 40) {
+        this.balls = [];
+        const chamberR = 90;
+        const cx = this.W / 2;
+        const cy = this.H / 2 - 10;
+
+        for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const r = Math.random() * (chamberR - 14);
+            this.balls.push({
+                x: cx + Math.cos(angle) * r,
+                y: cy + Math.sin(angle) * r,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                r: 9,
+                num: Math.floor(Math.random() * 99) + 1,
+                escaped: false,
+                color: `hsl(${Math.random() * 360}, 80%, 60%)`,
+            });
+        }
+    }
+
+    drawMachine(phase) {
+        const ctx = this.ctx;
+        const W = this.W, H = this.H;
+        const cx = W / 2, cy = H / 2 - 10;
+        const R = 92;
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Background glow
+        const grd = ctx.createRadialGradient(cx, cy, 10, cx, cy, R);
+        grd.addColorStop(0, "rgba(20,20,50,0.9)");
+        grd.addColorStop(1, "rgba(5,5,20,0.98)");
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, W, H);
+
+        // Chamber
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, 0, Math.PI * 2);
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 3;
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 18;
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, R - 2, 0, Math.PI * 2);
+        ctx.clip();
+
+        // Spin lines
+        if (phase === "spinning") {
+            for (let i = 0; i < 8; i++) {
+                const a = (Date.now() / 400 + i * Math.PI / 4) % (Math.PI * 2);
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
+                ctx.strokeStyle = `rgba(255,255,255,0.04)`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+
+        // Balls
+        for (const b of this.balls) {
+            if (b.escaped) continue;
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+
+            const ballGrd = ctx.createRadialGradient(b.x - 2, b.y - 2, 1, b.x, b.y, b.r);
+            ballGrd.addColorStop(0, "white");
+            ballGrd.addColorStop(0.35, b.color);
+            ballGrd.addColorStop(1, "rgba(0,0,0,0.6)");
+            ctx.fillStyle = ballGrd;
+            ctx.fill();
+
+            ctx.fillStyle = "#fff";
+            ctx.font = `bold ${b.r < 10 ? 7 : 8}px monospace`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(b.num, b.x, b.y);
+        }
+
+        ctx.restore();
+
+        // Tube
+        const tx = cx - this.tubeW / 2;
+        const ty = cy + R - 4;
+        const tubeGrd = ctx.createLinearGradient(tx, 0, tx + this.tubeW, 0);
+        tubeGrd.addColorStop(0, "rgba(80,80,80,0.8)");
+        tubeGrd.addColorStop(0.5, "rgba(180,180,180,0.9)");
+        tubeGrd.addColorStop(1, "rgba(80,80,80,0.8)");
+        ctx.fillStyle = tubeGrd;
+        ctx.fillRect(tx, ty, this.tubeW, this.tubeH + 10);
+
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(tx, ty, this.tubeW, this.tubeH + 10);
+
+        ctx.fillStyle = this.color;
+        ctx.font = "bold 10px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("KERALA LOTTERY", cx, 14);
+    }
+
+    updateBalls(phase) {
+        const cx = this.W / 2;
+        const cy = this.H / 2 - 10;
+        const R = 80;
+
+        for (const b of this.balls) {
+            if (b.escaped) continue;
+
+            if (phase === "spinning") {
+                const angle = Math.atan2(b.y - cy, b.x - cx);
+                const tangent = angle + Math.PI / 2;
+                b.vx += Math.cos(tangent) * 0.35 + (Math.random() - 0.5) * 0.4;
+                b.vy += Math.sin(tangent) * 0.35 + (Math.random() - 0.5) * 0.4;
+            } else {
+                b.vy += 0.25;
+                b.vx += (cx - b.x) * 0.008;
+            }
+
+            b.vx *= 0.97;
+            b.vy *= 0.97;
+
+            b.x += b.vx;
+            b.y += b.vy;
+
+            const dx = b.x - cx, dy = b.y - cy;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist + b.r > R) {
+                const nx = dx / dist, ny = dy / dist;
+                const dot = b.vx * nx + b.vy * ny;
+                b.vx -= 2 * dot * nx;
+                b.vy -= 2 * dot * ny;
+                b.x = cx + nx * (R - b.r);
+                b.y = cy + ny * (R - b.r);
+                b.vx *= 0.8;
+                b.vy *= 0.8;
+            }
+
+            for (const b2 of this.balls) {
+                if (b2 === b || b2.escaped) continue;
+                const ddx = b.x - b2.x, ddy = b.y - b2.y;
+                const dd = Math.sqrt(ddx * ddx + ddy * ddy);
+                if (dd < b.r + b2.r && dd > 0) {
+                    const overlap = (b.r + b2.r - dd) / 2;
+                    b.x  += (ddx / dd) * overlap;
+                    b.y  += (ddy / dd) * overlap;
+                    b2.x -= (ddx / dd) * overlap;
+                    b2.y -= (ddy / dd) * overlap;
+                    const tempVx = b.vx; const tempVy = b.vy;
+                    b.vx = b2.vx * 0.85; b.vy = b2.vy * 0.85;
+                    b2.vx = tempVx * 0.85; b2.vy = tempVy * 0.85;
+                }
+            }
+        }
+    }
+
+    run(onPick) {
+        if (this.running) return;
+        this.running = true;
+        this.pickedNumber = null;
+
+        this.initBalls(40);
+
+        const winnerIdx = Math.floor(Math.random() * this.balls.length);
+        const winner = this.balls[winnerIdx];
+
+        let frame = 0;
+        const SPIN_FRAMES = 200;
+        const EJECT_FRAMES = 55;
+        const exitCX = this.W / 2;
+        const exitCY = this.H / 2 - 10 + 72;
+
+        const loop = () => {
+            frame++;
+            const phase = frame < SPIN_FRAMES ? "spinning" : "settling";
+
+            if (phase === "settling") {
+                winner.x += (exitCX - winner.x) * 0.13;
+                winner.y += (exitCY - winner.y) * 0.13;
+                winner.vx *= 0.4;
+                winner.vy *= 0.4;
+            }
+
+            this.updateBalls(phase);
+            this.drawMachine(phase);
+
+            if (frame >= SPIN_FRAMES + EJECT_FRAMES) {
+                winner.escaped = true;
+                this.pickedNumber = winner.num;
+                this.running = false;
+                cancelAnimationFrame(this.animId);
+                this.drawMachine("done");
+                onPick(winner.num);
+                return;
+            }
+
+            this.animId = requestAnimationFrame(loop);
+        };
+
+        this.animId = requestAnimationFrame(loop);
+    }
+
+    stop() {
+        if (this.animId) cancelAnimationFrame(this.animId);
+        this.running = false;
+    }
+}
+
+// ================== MACHINE INSTANCES ==================
+const classicalMachine = new GravityMachine("classicalMachineCanvas", "#00ffcc");
+const quantumMachine   = new GravityMachine("quantumMachineCanvas",   "#bf80ff");
+
+// Initial idle draw
+setTimeout(() => {
+    classicalMachine.initBalls(40);
+    classicalMachine.drawMachine("idle");
+    quantumMachine.initBalls(40);
+    quantumMachine.drawMachine("idle");
+}, 300);
+
+// ================== HELPER – Populate grid + SAVE TO HISTORY ==================
+function populateNumbersList(elementId, numbers, isQuantum = false) {
+    const el = document.getElementById(elementId);
+    el.innerHTML = "";
+
+    // SAVE to global history for analysis
+    if (isQuantum) {
+        quantumHistory = [...numbers];
+    } else {
+        classicalHistory = [...numbers];
+    }
+
+    numbers.forEach((n, i) => {
+        const cell = document.createElement("div");
+        cell.className = "lottery-num-cell";
+        cell.style.animationDelay = `${i * 12}ms`;
+        const series = ["BA","BB","BC","BD","BE","BF","BG","BH","BJ","BK"][n % 10];
+        cell.textContent = `${series} ${String(n).padStart(2,'0')}`;
+        cell.title = `#${i+1}`;
+        el.appendChild(cell);
+    });
+}
+
+// ================== CLASSICAL LOTTERY ==================
+document.getElementById("generateClassicalLottery").onclick = () => {
+    const btn = document.getElementById("generateClassicalLottery");
+    btn.disabled = true;
+    btn.textContent = "🎰 Running...";
+
+    classicalMachine.run((pickedNum) => {
+        const numbers = [];
+        let seed = Date.now() & 0x7fffffff;
+        for (let i = 0; i < 200; i++) {
+            seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+            numbers.push((seed % 99) + 1);
+        }
+        numbers[0] = pickedNum;
+
+        setTimeout(() => {
+            populateNumbersList("classicalNumbersList", numbers, false);
+            btn.disabled = false;
+            btn.textContent = "▶ Start Machine";
+        }, 600);
+    });
+};
+
+// ================== QUANTUM LOTTERY ==================
+document.getElementById("generateQuantumLottery").onclick = () => {
+    const btn = document.getElementById("generateQuantumLottery");
+    const listEl = document.getElementById("quantumNumbersList");
+
+    btn.disabled = true;
+    btn.textContent = "⚛️ Running...";
+
+    // Clear previous results and show loading
+    listEl.innerHTML = '<div style="padding: 40px; text-align: center; color: #aaa;">Contacting IBM quantum hardware...<br>This may take 30s–several minutes (or timeout on free tier)</div>';
+
+    quantumMachine.run((pickedNum) => {
+        fetch("http://127.0.0.1:5000/quantum/200", { timeout: 120000 })  // 2 min timeout
+            .then(r => {
+                if (!r.ok) throw new Error(`Backend error: HTTP ${r.status}`);
+                return r.json();
+            })
+            .then(data => {
+                if (!data.random_numbers || data.random_numbers.length === 0) {
+                    throw new Error("No random numbers returned from quantum backend");
+                }
+                const numbers = data.random_numbers.map(v => (v % 99) + 1);
+                numbers[0] = pickedNum;
+
+                finalizeQuantum(numbers);
+            })
+            .catch(err => {
+                console.error("Quantum fetch failed:", err);
+                // Show warning but continue with fallback
+                listEl.innerHTML += '<div style="color:#ffcc00; padding:10px; text-align:center;">Quantum backend failed — using fast simulation fallback</div>';
+
+                let x = Date.now() ^ (Math.random() * 0xffffffff | 0);
+                const numbers = [];
+                for (let i = 0; i < 200; i++) {
+                    x ^= x << 13; x ^= x >> 17; x ^= x << 5;
+                    numbers.push((Math.abs(x) % 99) + 1);
+                }
+                numbers[0] = pickedNum;
+
+                finalizeQuantum(numbers);
+            });
+    });
+
+    function finalizeQuantum(numbers) {
+        setTimeout(() => {
+            populateNumbersList("quantumNumbersList", numbers, true);
+            btn.disabled = false;
+            btn.textContent = "▶ Start Machine";
+        }, 800);  // slight delay for smooth transition
+    }
+};
+
+// ================== ANALYZE BUTTON ON LOTTERY PAGE ==================
+document.getElementById("lotteryAnalyzeBtn").onclick = () => {
+    if (classicalHistory.length === 0 || quantumHistory.length === 0) {
+        alert("Please generate lottery results on both sides first!");
+        return;
+    }
+
+    const btn = document.getElementById("lotteryAnalyzeBtn");
+    btn.disabled = true;
+    btn.textContent = "Analyzing...";
+
+    // Run analysis with lottery data
+    renderAnalysis();
+
+    // Switch to analysis page
+    lotteryPage.classList.add("hidden");
+    analysisPage.classList.remove("hidden");
+
+    // Reset button text after short delay
+    setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = "📊 Analyze Lottery Results";
+    }, 1500);
+};
 // ================== ANALYSIS ==================
 
 function renderAnalysis(){

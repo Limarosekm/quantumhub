@@ -1,3 +1,4 @@
+
 from quantum import quantum_random_numbers
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
@@ -7,6 +8,7 @@ import math
 from collections import Counter
 from openpyxl import Workbook
 from openpyxl.chart import BarChart, Reference
+import random
 
 app = Flask(__name__)
 CORS(app)
@@ -30,7 +32,29 @@ def classical_rng(count):
         "method": "Mersenne Twister",
         "random_numbers": numbers
     })
+# ================= CLASSICAL LOTTERY =================
 
+@app.route("/classical-lottery")
+def classical_lottery():
+
+    series_list = [
+        "BA","BB","BC","BD","BE","BF","BG","BH",
+        "BJ","BK","BL","BM","BN","BO","BP","BR"
+    ]
+
+    tickets = []
+
+    for _ in range(500):
+
+        series = random.choice(series_list)
+        number = random.randint(100000, 999999)
+
+        tickets.append(f"{series} {number}")
+
+    return jsonify({
+        "type": "Classical Kerala Lottery",
+        "tickets": tickets
+    })
 
 # ================= QUANTUM RNG =================
 
@@ -44,7 +68,41 @@ def quantum_rng(count):
         "random_numbers": numbers
     })
 
+# ================= QUANTUM LOTTERY =================
+@app.route("/quantum-lottery")
+def quantum_lottery():
+    try:
+        # ↓↓↓ Change from 1500 to something small for testing
+        nums = quantum_random_numbers(90)   # 90 shots → ~30 tickets, much faster
 
+        series_list = [
+            "BA","BB","BC","BD","BE","BF","BG","BH",
+            "BJ","BK","BL","BM","BN","BO","BP","BR"
+        ]
+
+        tickets = []
+
+        for i in range(0, len(nums), 3):
+            if i+2 >= len(nums):
+                break
+            series_idx = nums[i] % len(series_list)
+            series = series_list[series_idx]
+
+            # Use two 8-bit numbers → 0–65535 range, then map to 100000–999999
+            number = (nums[i+1] * 256 + nums[i+2]) % 900000 + 100000
+
+            tickets.append(f"{series} {number}")
+
+        return jsonify({
+            "type": "Quantum Kerala Lottery",
+            "tickets": tickets
+        })
+
+    except Exception as e:
+        import traceback
+        print("Quantum lottery error:", str(e))
+        print(traceback.format_exc())
+        return jsonify({"error": str(e)}), 500
 # ================= EXCEL EXPORT =================
 
 @app.route("/export-excel", methods=["POST"])

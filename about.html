@@ -1,0 +1,626 @@
+
+AI Overview
+HTML, CSS, and JavaScript files detail the structure and functionality for a Quantum RNG Hub interface with RNG Lab and Lottery Gen demos.
+
+Gemini
+Ask about your files
+Summarize this folder
+Analyze each file in this folder
+What can Gemini do with folders in Google Drive
+Gemini in Workspace can make mistakes. Learn more
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — Quantum RNG Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --q: #00d4ff;
+            --p: #a855f7;
+            --gold: #ffd166;
+            --card-bg: rgba(255,255,255,0.035);
+            --border: rgba(124,77,255,0.22);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: #060a1e;
+            color: #e0d4ff;
+            font-family: 'Space Mono', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+        .wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 1060px;
+            margin: 0 auto;
+            padding: 0 28px 100px;
+        }
+
+        /* ── BACK BTN ── */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 28px 0 0;
+            padding: 9px 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.78rem;
+            color: #ccd4ff;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(180,160,255,0.25);
+            border-radius: 10px;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+        /* ── HERO ── */
+        .hero {
+            text-align: center;
+            padding: 64px 0 48px;
+        }
+        .hero-eyebrow {
+            display: inline-block;
+            padding: 5px 18px;
+            border: 1px solid rgba(0,212,255,0.35);
+            border-radius: 30px;
+            font-size: 9px;
+            color: var(--q);
+            letter-spacing: 3px;
+            margin-bottom: 22px;
+            position: relative;
+        }
+        .hero-eyebrow::before, .hero-eyebrow::after {
+            content: '';
+            position: absolute;
+            top: 50%; width: 55px; height: 1px;
+            transform: translateY(-50%);
+        }
+        .hero-eyebrow::before { right: calc(100% + 12px); background: linear-gradient(90deg, transparent, rgba(0,212,255,0.4)); }
+        .hero-eyebrow::after  { left: calc(100% + 12px);  background: linear-gradient(270deg, transparent, rgba(0,212,255,0.4)); }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.2rem, 5.5vw, 4rem);
+            font-weight: 900;
+            line-height: 1.15;
+            letter-spacing: 2px;
+            margin-bottom: 18px;
+        }
+        .hero-title .line1 { color: #e0d4ff; display: block; }
+        .hero-title .line2 {
+            display: block;
+            background: linear-gradient(90deg, var(--q), var(--p), var(--q));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 4s linear infinite;
+        }
+        @keyframes shimmer { 0%{background-position:0%} 100%{background-position:200%} }
+
+        .hero-sub {
+            font-size: 0.8rem;
+            color: rgba(180,160,255,0.5);
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 2.1;
+        }
+
+        /* ── DIVIDER ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 52px 0 38px;
+        }
+        .divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(124,77,255,0.4), transparent); }
+        .divider-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9px;
+            color: var(--p);
+            letter-spacing: 4px;
+            white-space: nowrap;
+        }
+
+        /* ── OVERVIEW CARD ── */
+        .overview-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px 44px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            margin-bottom: 24px;
+        }
+        .overview-card::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: 10%; right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--q), var(--p), transparent);
+        }
+        .overview-card h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--q);
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+        }
+        .overview-card p {
+            font-size: 0.82rem;
+            line-height: 2;
+            color: rgba(200,190,240,0.72);
+            margin-bottom: 14px;
+        }
+        .overview-card p:last-child { margin-bottom: 0; }
+        .overview-card strong { color: #c084fc; }
+
+        /* ── TECH PILLS ── */
+        .tech-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+        .tech-pill {
+            padding: 7px 16px;
+            border-radius: 30px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            font-family: 'Space Mono', monospace;
+            border: 1px solid;
+            transition: transform 0.2s;
+            cursor: default;
+        }
+        .tech-pill:hover { transform: scale(1.06); }
+        .tech-pill.blue   { color: var(--q);   border-color: rgba(0,212,255,0.3);   background: rgba(0,212,255,0.06); }
+        .tech-pill.purple { color: #c084fc;     border-color: rgba(192,132,252,0.3); background: rgba(192,132,252,0.06); }
+        .tech-pill.gold   { color: var(--gold); border-color: rgba(255,209,102,0.3); background: rgba(255,209,102,0.06); }
+        .tech-pill.green  { color: #4ade80;     border-color: rgba(74,222,128,0.3);  background: rgba(74,222,128,0.06); }
+
+        /* ── TEAM HEADING ── */
+        .team-heading {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .team-heading h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.4rem, 3vw, 2.2rem);
+            font-weight: 900;
+            color: #e0d4ff;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+        .team-heading p {
+            font-size: 0.78rem;
+            color: rgba(180,160,255,0.45);
+            letter-spacing: 2px;
+        }
+
+        /* ── 4-MEMBER GRID ── */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+        @media (max-width: 800px) { .team-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px) { .team-grid { grid-template-columns: 1fr; } }
+
+        .team-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 38px 22px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: all 0.35s cubic-bezier(.34,1.56,.64,1);
+        }
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: 15%; right: 15%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--mc), transparent);
+        }
+        .team-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 22px;
+            background: radial-gradient(circle at 50% 0%, var(--mg), transparent 65%);
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+        .team-card:hover::after { opacity: 1; }
+        .team-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px var(--mc);
+        }
+
+        .team-card:nth-child(1) { --mc:#00d4ff; --mg:rgba(0,212,255,0.11); }
+        .team-card:nth-child(2) { --mc:#c084fc; --mg:rgba(192,132,252,0.11); }
+        .team-card:nth-child(3) { --mc:#f472b6; --mg:rgba(244,114,182,0.11); }
+        .team-card:nth-child(4) { --mc:#facc15; --mg:rgba(250,204,21,0.11); }
+
+        .member-number {
+            position: absolute;
+            top: 14px; right: 16px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9px;
+            color: var(--mc);
+            opacity: 0.4;
+            letter-spacing: 1px;
+        }
+
+        .avatar-ring {
+            width: 92px; height: 92px;
+            border-radius: 50%;
+            margin: 0 auto 22px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .avatar-ring::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: conic-gradient(var(--mc), transparent 55%, var(--mc));
+            animation: spinring 4s linear infinite;
+        }
+        .team-card:nth-child(2) .avatar-ring::before { animation-delay: -1s; }
+        .team-card:nth-child(3) .avatar-ring::before { animation-delay: -2s; }
+        .team-card:nth-child(4) .avatar-ring::before { animation-delay: -3s; }
+        @keyframes spinring { to { transform: rotate(360deg); } }
+
+        .avatar-inner {
+            width: 84px; height: 84px;
+            border-radius: 50%;
+            background: rgba(6,10,30,0.96);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .member-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #f0eaff;
+            margin-bottom: 8px;
+            letter-spacing: 0.4px;
+            line-height: 1.3;
+        }
+        .member-role {
+            font-size: 8.5px;
+            color: var(--mc);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .member-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 8px;
+            letter-spacing: 1px;
+            border: 1px solid var(--mc);
+            color: var(--mc);
+            background: rgba(0,0,0,0.3);
+            opacity: 0.6;
+        }
+
+        /* ── GUIDE CARD ── */
+        .guide-section { margin-top: 10px; margin-bottom: 20px; }
+        .guide-label {
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9px;
+            letter-spacing: 4px;
+            color: rgba(255,209,102,0.45);
+            margin-bottom: 20px;
+        }
+        .guide-card {
+            background: linear-gradient(135deg, rgba(255,209,102,0.05), rgba(255,140,0,0.04), rgba(124,77,255,0.05));
+            border: 1px solid rgba(255,209,102,0.28);
+            border-radius: 24px;
+            padding: 36px 40px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            max-width: 600px;
+            margin: 0 auto;
+            transition: all 0.3s;
+        }
+        .guide-card:hover {
+            border-color: rgba(255,209,102,0.55);
+            box-shadow: 0 0 50px rgba(255,209,102,0.1);
+            transform: translateY(-4px);
+        }
+        .guide-card::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: 15%; right: 15%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        .guide-card::after {
+            content: '✦';
+            position: absolute;
+            right: 28px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 6rem;
+            color: rgba(255,209,102,0.04);
+            pointer-events: none;
+            line-height: 1;
+        }
+        .guide-avatar {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .guide-avatar::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: conic-gradient(var(--gold), transparent 55%, var(--gold));
+            animation: spinring 5s linear infinite;
+        }
+        .guide-avatar-inner {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: rgba(6,10,30,0.96);
+            border: 2px solid rgba(255,209,102,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .guide-info .guide-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9px;
+            color: rgba(255,209,102,0.45);
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+        .guide-info h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 6px;
+        }
+        .guide-info p {
+            font-size: 9px;
+            color: rgba(255,209,102,0.38);
+            letter-spacing: 1.5px;
+            line-height: 1.8;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            text-align: center;
+            padding: 50px 0 0;
+            border-top: 1px solid rgba(124,77,255,0.1);
+        }
+        .footer-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--q), var(--p));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+        }
+        .footer-text { font-size: 9px; color: rgba(180,160,255,0.28); letter-spacing: 2px; }
+
+        /* ── ANIMATIONS ── */
+        .fade-in { opacity:0; transform:translateY(22px); animation:fadein 0.65s ease forwards; }
+        @keyframes fadein { to { opacity:1; transform:translateY(0); } }
+        .d1{animation-delay:.05s} .d2{animation-delay:.15s} .d3{animation-delay:.25s}
+        .d4{animation-delay:.35s} .d5{animation-delay:.45s} .d6{animation-delay:.55s} .d7{animation-delay:.65s}
+    </style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="wrap">
+
+    <a href="index.html" class="back-btn">← Back to Hub</a>
+
+    <!-- HERO -->
+    <section class="hero fade-in d1">
+        <div class="hero-eyebrow">QUANTUM RNG LAB — MEET THE TEAM</div>
+        <h1 class="hero-title">
+            <span class="line1">The People Behind</span>
+            <span class="line2">QRNG Hub</span>
+        </h1>
+        <p class="hero-sub">
+            A student research project exploring true quantum randomness versus classical pseudo-random number generation, built with IBM Qiskit and real quantum hardware.
+        </p>
+    </section>
+
+    <!-- PROJECT OVERVIEW -->
+    <div class="divider fade-in d2">
+        <div class="divider-line"></div>
+        <div class="divider-label">PROJECT OVERVIEW</div>
+        <div class="divider-line"></div>
+    </div>
+
+    <div class="overview-card fade-in d2">
+        <h2>⚛️ What Is QRNG Hub?</h2>
+        <p>
+            The <strong>Quantum Random Number Generator Hub</strong> is an interactive web platform that bridges quantum computing theory and hands-on understanding. By connecting to <strong>IBM Quantum hardware via Qiskit</strong>, the platform generates genuinely unpredictable numbers rooted in quantum mechanical uncertainty — something no classical computer can truly replicate.
+        </p>
+        <p>
+            Classical computers use deterministic algorithms like <strong>Linear Congruential Generators (LCG)</strong> that only appear random. Quantum randomness exploits the fundamental <strong>superposition and measurement collapse</strong> of qubits — making each result provably unpredictable, with deep implications for cryptography, security, and scientific simulation.
+        </p>
+    </div>
+
+    <!-- TECH STACK -->
+    <div class="divider fade-in d3">
+        <div class="divider-line"></div>
+        <div class="divider-label">TECHNOLOGY STACK</div>
+        <div class="divider-line"></div>
+    </div>
+
+    <div class="tech-row fade-in d3">
+        <span class="tech-pill blue">⚛️ IBM Qiskit</span>
+        <span class="tech-pill blue">🔬 Quantum Circuits</span>
+        <span class="tech-pill purple">🐍 Python Flask</span>
+        <span class="tech-pill purple">📦 REST API</span>
+        <span class="tech-pill gold">🌐 HTML5 / CSS3</span>
+        <span class="tech-pill gold">📊 Chart.js</span>
+        <span class="tech-pill green">🎮 Canvas API</span>
+        <span class="tech-pill green">⚙️ Vanilla JS</span>
+        <span class="tech-pill blue">🧮 NIST Statistical Tests</span>
+        <span class="tech-pill purple">🔒 LCG Classical PRNG</span>
+    </div>
+
+    <!-- TEAM -->
+    <div class="divider fade-in d4">
+        <div class="divider-line"></div>
+        <div class="divider-label">THE RESEARCHERS</div>
+        <div class="divider-line"></div>
+    </div>
+
+    <div class="team-heading fade-in d4">
+        <h2>Meet the Developers</h2>
+        <p>DEPARTMENT OF COMPUTER SCIENCE &nbsp;·&nbsp; STUDENT PROJECT TEAM</p>
+    </div>
+
+    <div class="team-grid">
+        <div class="team-card fade-in d4">
+            <span class="member-number">01</span>
+            <div class="avatar-ring"><div class="avatar-inner">✨</div></div>
+            <div class="member-name">Lima Rose K M</div>
+            <div class="member-role">Developer</div>
+            <span class="member-tag">TEAM MEMBER</span>
+        </div>
+        <div class="team-card fade-in d5">
+            <span class="member-number">02</span>
+            <div class="avatar-ring"><div class="avatar-inner">🏆</div></div>
+            <div class="member-name">Maya K C</div>
+            <div class="member-role">Developer</div>
+            <span class="member-tag">TEAM MEMBER</span>
+        </div>
+        <div class="team-card fade-in d6">
+            <span class="member-number">03</span>
+            <div class="avatar-ring"><div class="avatar-inner">🌟</div></div>
+            <div class="member-name">Liya Babu</div>
+            <div class="member-role">Developer</div>
+            <span class="member-tag">TEAM MEMBER</span>
+        </div>
+        <div class="team-card fade-in d7">
+            <span class="member-number">04</span>
+            <div class="avatar-ring"><div class="avatar-inner">⚡</div></div>
+            <div class="member-name">Krishna S Kumar</div>
+            <div class="member-role">Developer</div>
+            <span class="member-tag">TEAM MEMBER</span>
+        </div>
+    </div>
+
+    <!-- GUIDE -->
+    <div class="guide-section fade-in d7">
+        <div class="guide-label">— PROJECT GUIDE —</div>
+        <div class="guide-card">
+            <div class="guide-avatar">
+                <div class="guide-avatar-inner">👩‍🏫</div>
+            </div>
+            <div class="guide-info">
+                <div class="guide-title">FACULTY SUPERVISOR</div>
+                <h3>Shiny M I</h3>
+                <p>PROJECT GUIDE &nbsp;·&nbsp; MENTOR &nbsp;·&nbsp; FACULTY SUPERVISOR</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div class="footer-logo">QRNG HUB</div>
+        <div class="footer-text">QUANTUM RANDOMNESS RESEARCH PROJECT &nbsp;·&nbsp; NEXT GEN RANDOMNESS PROTOCOL</div>
+    </div>
+
+</div>
+
+<script>
+(function(){
+    const cv = document.getElementById('bg'), cx = cv.getContext('2d');
+    function rsz(){ cv.width = innerWidth; cv.height = innerHeight; }
+    rsz(); window.addEventListener('resize', rsz);
+
+    const pts = Array.from({length:40}, () => ({
+        x: Math.random(), y: Math.random(),
+        vx: (Math.random()-.5)*.00026, vy: (Math.random()-.5)*.00026,
+        r: 1.5 + Math.random()*2.2,
+        ph: Math.random()*6.28, phSpd: 0.015+Math.random()*.02,
+        col: ['#00d4ff','#a855f7','#7c4dff','#e879f9'][Math.floor(Math.random()*4)]
+    }));
+
+    function frame(){
+        const W = cv.width, H = cv.height;
+        cx.clearRect(0,0,W,H);
+        cx.fillStyle = '#060a1e'; cx.fillRect(0,0,W,H);
+        [{x:.18,y:.25,c:'rgba(120,60,255,0.13)'},{x:.82,y:.72,c:'rgba(0,212,255,0.09)'},{x:.5,y:.04,c:'rgba(168,85,247,0.08)'}].forEach(g => {
+            const grd = cx.createRadialGradient(g.x*W,g.y*H,0,g.x*W,g.y*H,W*.38);
+            grd.addColorStop(0, g.c); grd.addColorStop(1,'transparent');
+            cx.fillStyle = grd; cx.fillRect(0,0,W,H);
+        });
+        pts.forEach(p => {
+            p.x += p.vx; p.y += p.vy;
+            if(p.x<0)p.x=1; if(p.x>1)p.x=0;
+            if(p.y<0)p.y=1; if(p.y>1)p.y=0;
+            p.ph += p.phSpd;
+            const alpha = 0.35 + 0.4*Math.sin(p.ph);
+            cx.beginPath(); cx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
+            cx.fillStyle = p.col.replace(')',`,${alpha})`).replace('rgb','rgba'); cx.fill();
+        });
+        for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+            const dx=(pts[i].x-pts[j].x)*W, dy=(pts[i].y-pts[j].y)*H, d=Math.hypot(dx,dy);
+            if(d<125){ cx.beginPath(); cx.moveTo(pts[i].x*W,pts[i].y*H); cx.lineTo(pts[j].x*W,pts[j].y*H);
+                cx.strokeStyle=`rgba(124,77,255,${0.11*(1-d/125)})`; cx.lineWidth=0.5; cx.stroke(); }
+        }
+        requestAnimationFrame(frame);
+    }
+    frame();
+})();
+</script>
+
+</body>
+</html>

@@ -1,15 +1,5 @@
 
-AI Overview
-Code implements a Quantum vs Classical RNG web application comparing results via analysis charts and supporting a lottery simulation.
 
-Introducing conversation history
-From now on, you can view and resume your saved conversations in the History section.
-Gemini
-Ask about your files
-Summarize this folder
-Analyze each file in this folder
-What can Gemini do with folders in Google Drive
-Gemini in Workspace can make mistakes. Learn more
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,48 +10,107 @@ Gemini in Workspace can make mistakes. Learn more
 </head>
 
 <body>
+<canvas id="qBg" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></canvas>
 
-<!-- ================= MILKY WAY CANVAS ================= -->
-<canvas id="galaxyCanvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></canvas>
 
 <!-- ================= HOME SCREEN ================= -->
 <div id="home">
+  <div class="qhome-wrap">
 
-    <h1 class="app-title">Quantum vs Classical Randomness Lab</h1>
-
-    <div class="grid">
-
-        <button class="card red" id="rngBtn">
-            <span class="card-emoji">🎲</span>
-            <span class="card-label">RNG Lab</span>
-        </button>
-
-        <button class="card blue" id="passwordBtn">
-            <span class="card-emoji">🔑</span>
-            <span class="card-label">Password Generator</span>
-        </button>
-
-        <button class="card green" id="lotteryHomeBtn">
-            <span class="card-emoji">🎰</span>
-            <span class="card-label">Lottery Generator</span>
-        </button>
-
-        <button class="card purple" id="cryptoBtn">
-            <span class="card-emoji">🔐</span>
-            <span class="card-label">Cryptography Demo</span>
-        </button>
-
-        <button class="card orange" id="spreadBtn">
-            <span class="card-emoji">📡</span>
-            <span class="card-label">Spreading Demo</span>
-        </button>
-
-        <button class="card teal" id="aboutBtn">
-            <span class="card-emoji">ℹ️</span>
-            <span class="card-label">About Project</span>
-        </button>
-
+    <!-- SIDEBAR -->
+    <div class="qsidebar">
+      <div class="qlogo">
+        <div class="qlogo-icon">
+          <svg viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <span class="qlogo-text">QRNG HUB</span>
+      </div>
+      <nav class="qnav">
+        <div class="qnav-item active" id="sideHome">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Home<span class="qnav-dot"></span>
+        </div>
+        <div class="qnav-item" id="sideRng">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          RNG Lab
+        </div>
+        <div class="qnav-item" id="sidePwd">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83"/></svg>
+          Password Gen
+        </div>
+        <div class="qnav-item" id="sideLottery">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Lottery Gen
+        </div>
+        <div class="qnav-item" id="sideSpread">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Spreading
+        </div>
+        <div class="qnav-item" id="sideAbout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+          About
+        </div>
+      </nav>
+      <div class="qsidebar-footer">
+        <div class="qstatus-dot"></div>
+        <span class="qstatus-text">QUANTUM LINK ACTIVE</span>
+      </div>
     </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="qmain">
+      <div class="qbadge">NEXT GEN RANDOMNESS PROTOCOL</div>
+      <h1 class="qhero-title"><span class="qgradient">Quantum</span> vs<br>Classical Hub</h1>
+      <p class="qhero-sub">The central hub for exploring, generating, and implementing true quantum randomness in a world of deterministic computing.</p>
+
+      <div class="qcards">
+        <button class="qcard" id="rngBtn">
+          <span class="qcard-tag">INTERACTIVE</span>
+          <div class="qcard-emoji-wrap"><span class="qcard-emoji">🎲</span></div>
+          <div class="qcard-title">RNG Lab</div>
+          <div class="qcard-desc">Generate & compare quantum vs classical random numbers in real time.</div>
+          <div class="qcard-link">Explore module →</div>
+        </button>
+        <button class="qcard" id="passwordBtn">
+          <span class="qcard-tag">SECURE</span>
+          <div class="qcard-emoji-wrap"><span class="qcard-emoji">🔑</span></div>
+          <div class="qcard-title">Password Gen</div>
+          <div class="qcard-desc">Create truly unpredictable passwords backed by IBM quantum hardware.</div>
+          <div class="qcard-link">Explore module →</div>
+        </button>
+        <button class="qcard" id="lotteryHomeBtn">
+          <span class="qcard-tag">TRENDING</span>
+          <div class="qcard-emoji-wrap"><span class="qcard-emoji">🎰</span></div>
+          <div class="qcard-title">Lottery Gen</div>
+          <div class="qcard-desc">Gravity ball simulation powered by genuine quantum entropy.</div>
+          <div class="qcard-link">Explore module →</div>
+        </button>
+        <button class="qcard" id="treasureHuntBtn">
+  <span class="qcard-tag">GAME</span>
+  <div class="qcard-emoji-wrap"><span class="qcard-emoji">🪙🗺️</span></div>
+  <div class="qcard-title">Treasure Hunt</div>
+  <div class="qcard-desc">Discover hidden treasure using true quantum randomness vs classical PRNG</div>
+  <div class="qcard-link">Play now →</div>
+</button>
+        </button>
+        <button class="qcard" id="spreadBtn">
+          <span class="qcard-tag">SIGNAL</span>
+          <div class="qcard-emoji-wrap"><span class="qcard-emoji">📡</span></div>
+          <div class="qcard-title">Spreading Demo</div>
+          <div class="qcard-desc">See how quantum randomness spreads across global security systems.</div>
+          <div class="qcard-link">Explore module →</div>
+        </button>
+        <button class="qcard" id="aboutBtn">
+          <span class="qcard-tag">INFO</span>
+          <div class="qcard-emoji-wrap"><span class="qcard-emoji">ℹ️</span></div>
+          <div class="qcard-title">About Project</div>
+          <div class="qcard-desc">Learn about the science and team behind this quantum research lab.</div>
+          <div class="qcard-link">Explore module →</div>
+        </button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <!-- ================= SPLIT SCREEN ================= -->
@@ -101,28 +150,77 @@ Gemini in Workspace can make mistakes. Learn more
 <div id="spreadPage" class="spread hidden">
     <button id="spreadBackBtn">← Back</button>
     <h1>Spreading &amp; Despreading Demo</h1>
+    <p style="text-align:center;color:rgba(180,160,255,0.6);font-size:0.8rem;margin:-10px 0 20px;letter-spacing:1px;">Three-way quantum advantage demonstration</p>
+
+    <!-- ROW 1: Message + Classical + Quantum side by side -->
     <div class="spread-container">
+
         <div class="spread-card">
-            <h2>Message</h2>
-            <p id="messageBits">---</p>
-            <button id="generateMessageBtn">Generate Message</button>
+            <h2>📨 Message</h2>
+            <p id="messageBits" class="spread-value" style="font-size:1rem;letter-spacing:6px;text-align:center;">---</p>
+            <button id="generateMessageBtn" style="margin-top:16px;">Generate Message</button>
         </div>
+
         <div class="spread-card">
-            <h2>Classical Spreading</h2>
-            <p>Code:</p><p id="classicalCode">---</p>
-            <p>Spread Signal:</p><p id="classicalSpread">---</p>
-            <p>Recovered Message:</p><p id="classicalRecovered">---</p>
-            <p>Error Rate:</p><p id="classicalError">---</p>
-            <button id="runClassicalSpread">Run Classical</button>
+            <h2>🖥️ Classical (LCG)</h2>
+            <p class="spread-label">Spreading Code</p>
+            <p id="classicalCode" class="spread-value">---</p>
+            <p class="spread-label">Spread Signal</p>
+            <p id="classicalSpread" class="spread-value">---</p>
+            <p class="spread-label">Recovered Message</p>
+            <p id="classicalRecovered" class="spread-value">---</p>
+            <p class="spread-label">Error Rate (single pass)</p>
+            <p id="classicalError" class="spread-value">---</p>
+            <p class="spread-label">Repetition Vote Error</p>
+            <p id="classicalRepError" class="spread-value">---</p>
+            <p class="spread-label">Best Code Score</p>
+            <p id="classicalWalshScore" class="spread-value">---</p>
+            <p class="spread-label">Predictability</p>
+            <div class="pred-bar-wrap"><div id="classicalPredBar" class="pred-bar pred-bad"></div></div>
+            <p id="classicalPredText" class="spread-value" style="color:#ff6b6b;font-size:0.75rem;">---</p>
+            <button id="runClassicalSpread" style="margin-top:16px;">Run Classical</button>
         </div>
+
         <div class="spread-card">
-            <h2>Quantum Spreading</h2>
-            <p>Code:</p><p id="quantumCode">---</p>
-            <p>Spread Signal:</p><p id="quantumSpread">---</p>
-            <p>Recovered Message:</p><p id="quantumRecovered">---</p>
-            <p>Error Rate:</p><p id="quantumError">---</p>
-            <button id="runQuantumSpread">Run Quantum</button>
+            <h2>⚛️ Quantum (IBM)</h2>
+            <p class="spread-label">Spreading Code</p>
+            <p id="quantumCode" class="spread-value">---</p>
+            <p class="spread-label">Spread Signal</p>
+            <p id="quantumSpread" class="spread-value">---</p>
+            <p class="spread-label">Recovered Message</p>
+            <p id="quantumRecovered" class="spread-value">---</p>
+            <p class="spread-label">Error Rate (single pass)</p>
+            <p id="quantumError" class="spread-value">---</p>
+            <p class="spread-label">Repetition Vote Error</p>
+            <p id="quantumRepError" class="spread-value">---</p>
+            <p class="spread-label">Best Code Score</p>
+            <p id="quantumWalshScore" class="spread-value">---</p>
+            <p class="spread-label">Predictability</p>
+            <div class="pred-bar-wrap"><div id="quantumPredBar" class="pred-bar pred-good"></div></div>
+            <p id="quantumPredText" class="spread-value" style="color:#00d4ff;font-size:0.75rem;">---</p>
+            <button id="runQuantumSpread" style="margin-top:16px;">Run Quantum</button>
         </div>
+
+        <!-- CHARTS COLUMN -->
+        <div class="spread-card" style="min-width:300px;max-width:400px;">
+            <h2>📊 Comparison</h2>
+
+            <p class="spread-label">① Avg Error Rate (100 trials)</p>
+            <div style="position:relative;height:160px;width:100%;margin-bottom:16px;">
+                <canvas id="errorChart"></canvas>
+            </div>
+
+            <p class="spread-label">② Noise Resistance</p>
+            <div style="position:relative;height:160px;width:100%;margin-bottom:16px;">
+                <canvas id="noiseChart"></canvas>
+            </div>
+
+            <p class="spread-label">③ Error Rate by Noise Level</p>
+            <div style="position:relative;height:140px;width:100%;">
+                <canvas id="walshChart"></canvas>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -130,17 +228,23 @@ Gemini in Workspace can make mistakes. Learn more
 <div id="analysisPage" class="analysis hidden">
     <button id="analysisBackBtn">← Back</button>
     <h1>Randomness Analysis</h1>
+
+    <!-- Row 1: Frequency histograms -->
     <div class="analysis-container">
         <div class="analysis-card">
-            <h2>Classical RNG (LCG)</h2>
+            <h2>Classical RNG — Frequency</h2>
             <canvas id="classicalChart"></canvas>
-            <p id="classicalEntropy"></p>
+            <p id="classicalEntropy" class="entropy-text"></p>
         </div>
         <div class="analysis-card">
-            <h2>Quantum RNG (Qiskit)</h2>
+            <h2>Quantum RNG — Frequency</h2>
             <canvas id="quantumChart"></canvas>
-            <p id="quantumEntropy"></p>
+            <p id="quantumEntropy" class="entropy-text"></p>
         </div>
+    </div>
+
+    <!-- Row 2: Bit frequency + Metrics -->
+    <div class="analysis-container">
         <div class="analysis-card">
             <h2>Bit Frequency Comparison</h2>
             <canvas id="bitFrequencyChart"></canvas>
@@ -150,11 +254,99 @@ Gemini in Workspace can make mistakes. Learn more
             <canvas id="metricsChart"></canvas>
         </div>
     </div>
-    <div class="analysis-card">
-        <h2>Bitstream Visualization</h2>
-        <div id="bitGrid"></div>
+
+    <!-- Verdict card -->
+    <div id="verdictCard" style="margin:0 0 20px 0; grid-column:1/-1; background:rgba(0,0,0,0.35); border-radius:18px; padding:22px 30px; border:1px solid rgba(140,120,255,0.25);">
+        <h2 style="text-align:center;font-family:'Orbitron',sans-serif;font-size:0.85rem;letter-spacing:3px;color:#ffe066;margin-bottom:14px;">⚡ TEST VERDICT</h2>
+        <div id="verdictRows" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;"></div>
     </div>
-</div>
+
+    <!-- Bitstream side by side -->
+    <div class="analysis-card" style="grid-column:1/-1;">
+        <h2>Bitstream Visualization</h2>
+        <div style="display:flex;gap:30px;justify-content:center;flex-wrap:wrap;">
+            <div style="text-align:center;">
+                <p style="color:#2ecc71;font-family:'Orbitron',sans-serif;font-size:0.7rem;letter-spacing:2px;margin-bottom:8px;">CLASSICAL (LCG)</p>
+                <div id="bitGridClassical"></div>
+            </div>
+            <div style="text-align:center;">
+                <p style="color:#9b59b6;font-family:'Orbitron',sans-serif;font-size:0.7rem;letter-spacing:2px;margin-bottom:8px;">QUANTUM</p>
+                <div id="bitGridQuantum"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multi-Lag Autocorrelation -->
+    <div class="analysis-section" style="margin:20px 0;">
+        <h2>Multi-Lag Autocorrelation <span style="font-size:0.6rem;opacity:0.6;">(lags 1–20 — LCG shows periodic spikes)</span></h2>
+        <div class="analysis-row">
+            <div class="analysis-box"><h3>Classical (LCG)</h3><canvas id="lagClassical"></canvas></div>
+            <div class="analysis-box"><h3>Quantum</h3><canvas id="lagQuantum"></canvas></div>
+        </div>
+        <p class="analysis-text">Each bar shows how much value[n] predicts value[n+lag]. LCG generators show spikes at regular lags due to their linear recurrence structure. Quantum randomness stays flat near zero across all lags — each number is truly independent of all previous ones.</p>
+    </div>
+
+    <!-- 2D Correlation Plot -->
+    <div class="analysis-section" style="margin:30px 0;">
+        <h2>2D Correlation Plot <span style="font-size:0.6rem;opacity:0.6;">(successive pairs — LCG shows diagonal structure)</span></h2>
+        <div class="analysis-row">
+            <div class="analysis-box"><h3>Classical (LCG)</h3><canvas id="corrClassical"></canvas></div>
+            <div class="analysis-box"><h3>Quantum</h3><canvas id="corrQuantum"></canvas></div>
+        </div>
+        <p class="analysis-text">Each point plots value[n] vs value[n+1]. True randomness fills the square uniformly. LCG generators leave diagonal lines or banding patterns — a structural weakness not present in quantum randomness.</p>
+    </div>
+
+    <!-- Monte Carlo -->
+    <div class="analysis-section">
+        <h2>Monte Carlo π Simulation</h2>
+        <div class="analysis-row">
+            <div class="analysis-box"><h3>Classical</h3><canvas id="monteCarloClassical"></canvas></div>
+            <div class="analysis-box"><h3>Quantum</h3><canvas id="monteCarloQuantum"></canvas></div>
+        </div>
+        <p class="analysis-text">Quantum randomness produces a more uniform distribution of points in the Monte Carlo simulation, leading to a more natural approximation of π.</p>
+    </div>
+
+    <!-- Random Walk -->
+    <div class="analysis-section">
+        <h2>Random Walk Behaviour</h2>
+        <div class="analysis-row">
+            <div class="analysis-box"><h3>Classical</h3><canvas id="walkClassical"></canvas></div>
+            <div class="analysis-box"><h3>Quantum</h3><canvas id="walkQuantum"></canvas></div>
+        </div>
+        <p class="analysis-text">Quantum randomness produces balanced upward and downward steps, while classical pseudo-random generators may introduce slight directional bias.</p>
+    </div>
+
+    <!-- Random Walk Drift -->
+    <div class="analysis-section">
+        <h2>Random Walk Drift Test</h2>
+        <div class="analysis-row">
+            <div class="analysis-box"><h3>Classical</h3><canvas id="driftClassical"></canvas></div>
+            <div class="analysis-box"><h3>Quantum</h3><canvas id="driftQuantum"></canvas></div>
+        </div>
+        <p class="analysis-text">Drift measures how far the walk moves away from zero. Quantum randomness tends to remain centered, indicating stronger statistical balance.</p>
+    </div>
+
+    <!-- NIST Frequency -->
+    <div class="analysis-section">
+        <h2>NIST Frequency Test</h2>
+        <div class="analysis-row">
+            <div class="analysis-box"><h3>Classical</h3><canvas id="nistClassical"></canvas></div>
+            <div class="analysis-box"><h3>Quantum</h3><canvas id="nistQuantum"></canvas></div>
+        </div>
+        <p class="analysis-text">The NIST frequency test checks if the number of 0s and 1s are balanced. Quantum sources typically produce a closer 50-50 distribution.</p>
+    </div>
+
+    <!-- Entropy Heatmap -->
+    <div class="analysis-section">
+        <h2>Entropy Heatmap</h2>
+        <div class="analysis-row">
+            <div class="analysis-box"><h3>Classical</h3><canvas id="heatmapClassical" width="200" height="200" style="image-rendering:pixelated;width:200px;height:200px;"></canvas></div>
+            <div class="analysis-box"><h3>Quantum</h3><canvas id="heatmapQuantum" width="200" height="200" style="image-rendering:pixelated;width:200px;height:200px;"></canvas></div>
+        </div>
+        <p class="analysis-text">The entropy heatmap visualizes the distribution of bits as pixels. True randomness produces a uniform noise pattern without visible structures or clusters.</p>
+    </div>
+
+</div><!-- end #analysisPage -->
 
 <!-- ================= LOTTERY PAGE ================= -->
 <div id="lotteryPage" class="lottery hidden">
@@ -183,203 +375,75 @@ Gemini in Workspace can make mistakes. Learn more
         </div>
     </div>
 </div>
+<!-- ================= TREASURE HUNT PAGE (updated) ================= -->
+<div id="treasurePage" class="hidden full-page">
 
+    <!-- Top bar: back button only -->
+    <div style="display:flex; align-items:center; gap:16px; margin-bottom:10px; position:relative; z-index:2;">
+        <button id="treasureBackBtn" style="
+            padding: 8px 16px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(180,160,255,0.3);
+            border-radius: 8px;
+            color: #ccd4ff;
+            backdrop-filter: blur(8px);
+            transition: 0.2s;
+            white-space: nowrap;
+        ">← Back to Hub</button>
+    </div>
+
+    <!-- Page title -->
+    <h1 style="
+        text-align: center;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 900;
+        letter-spacing: 4px;
+        color: #c084fc;
+        text-shadow: 0 0 30px rgba(192,132,252,0.5);
+        margin: 10px 0 0;
+        position: relative;
+        z-index: 1;
+    ">🪙 Treasure Hunt Challenge</h1>
+    <p style="
+        text-align:center;
+        color: rgba(180,160,255,0.55);
+        font-size: 0.75rem;
+        letter-spacing: 3px;
+        margin: 6px 0 0;
+        font-family: 'Space Mono', monospace;
+        position: relative;
+        z-index: 1;
+    ">QUANTUM vs CLASSICAL RANDOMNESS GAME</p>
+
+    <div class="treasure-controls">
+        <select id="rngType">
+            <option value="classical">Classical RNG</option>
+            <option value="quantum">Quantum RNG</option>
+        </select>
+        <button id="startTreasureGame" class="big-generate-btn">
+            🎮 Start New Game
+        </button>
+    </div>
+
+    <div id="treasureStatus">Choose RNG type and start the game.</div>
+    <div id="treasureClue"></div>
+    <div id="treasureMoves" style="text-align:center; color:#a8b8ff; font-family:'Space Mono',monospace; font-size:0.85rem; margin-bottom:6px;">Moves: 0</div>
+
+<div id="treasureBoard" class="game-grid"></div>
+    <div id="treasureBoard" class="game-grid"></div>
+
+    <div class="game-legend">
+        5 × 5 grid &nbsp;|&nbsp; 🪙 = Treasure &nbsp;|&nbsp; 💀 = Trap<br>
+        Click adjacent cells to move. Find the treasure, avoid the traps!
+    </div>
+</div>
 <!-- ================= HOME SCREEN SCRIPTS ================= -->
 <script>
-// ---- Starfield ----
-(function() {
-    const canvas = document.getElementById('galaxyCanvas');
-    const ctx = canvas.getContext('2d');
-    let W, H, mouse = { x: 0.5, y: 0.5 }, targetMouse = { x: 0.5, y: 0.5 };
 
-    // ---- Resize ----
-    function resize() {
-        W = canvas.width  = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', () => { resize(); buildScene(); });
-
-    // ---- Mouse parallax (only on home screen) ----
-    document.addEventListener('mousemove', e => {
-        targetMouse.x = e.clientX / W;
-        targetMouse.y = e.clientY / H;
-    });
-
-    // ---- Star layers (3 depths for parallax) ----
-    let layers = [];
-    function buildScene() {
-        layers = [];
-        const counts = [320, 180, 80];   // far, mid, near
-        const sizes  = [[0.4,1.1],[0.8,1.8],[1.4,2.8]];
-        const speeds = [0.006, 0.014, 0.025];
-        const colors = [
-            ['#ffffff','#cce8ff','#ffeedd','#e8ccff','#ffffff','#ffffff'],
-            ['#ffffff','#aad4ff','#ffd8aa','#d4aaff','#ffffff'],
-            ['#ffffff','#88ccff','#ffccaa','#cc88ff']
-        ];
-        for (let l = 0; l < 3; l++) {
-            const stars = [];
-            for (let i = 0; i < counts[l]; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const dist  = Math.random();
-                const inBand = Math.random() < 0.55;
-                let x, y;
-                if (inBand) {
-                    // concentrate along a diagonal milky-way band
-                    const t = Math.random();
-                    const bx = 0.15 + t * 0.7;
-                    const by = 0.7  - t * 0.5;
-                    x = bx + (Math.random() - 0.5) * 0.28;
-                    y = by + (Math.random() - 0.5) * 0.22;
-                } else {
-                    x = Math.random();
-                    y = Math.random();
-                }
-                const [sMin, sMax] = sizes[l];
-                stars.push({
-                    bx: x, by: y,    // base position (0-1)
-                    r: sMin + Math.random() * (sMax - sMin),
-                    color: colors[l][Math.floor(Math.random() * colors[l].length)],
-                    twinklePhase: Math.random() * Math.PI * 2,
-                    twinkleSpeed: 0.4 + Math.random() * 1.2,
-                    baseAlpha: 0.35 + Math.random() * 0.65,
-                    speed: speeds[l]
-                });
-            }
-            layers.push(stars);
-        }
-    }
-    buildScene();
-
-    // ---- Shooting stars ----
-    let shooters = [];
-    function spawnShooter() {
-        shooters.push({
-            x: Math.random() * W * 0.8,
-            y: Math.random() * H * 0.3,
-            len: 90 + Math.random() * 120,
-            vx: 3.5 + Math.random() * 3,
-            vy: 1.2 + Math.random() * 2,
-            alpha: 1,
-            life: 1
-        });
-    }
-    setInterval(() => { if (Math.random() < 0.45) spawnShooter(); }, 1800);
-
-    // ---- Nebula blobs (pre-built offscreen) ----
-    const nebulaCanvas = document.createElement('canvas');
-    function buildNebula() {
-        nebulaCanvas.width  = W;
-        nebulaCanvas.height = H;
-        const nc = nebulaCanvas.getContext('2d');
-        const blobs = [
-            { cx: 0.18, cy: 0.20, rx: 0.38, ry: 0.22, angle: -0.4, r:100, g:60,  b:240, a: 0.10 },
-            { cx: 0.72, cy: 0.62, rx: 0.32, ry: 0.20, angle:  0.3, r: 0,  g:160, b:255, a: 0.09 },
-            { cx: 0.50, cy: 0.50, rx: 0.50, ry: 0.28, angle: -0.2, r:180, g:80,  b:255, a: 0.07 }, // core
-            { cx: 0.30, cy: 0.75, rx: 0.25, ry: 0.18, angle:  0.5, r:255, g:80,  b:180, a: 0.08 },
-            { cx: 0.80, cy: 0.20, rx: 0.22, ry: 0.15, angle: -0.6, r: 60, g:200, b:255, a: 0.07 },
-        ];
-        blobs.forEach(b => {
-            nc.save();
-            nc.translate(b.cx * W, b.cy * H);
-            nc.rotate(b.angle);
-            nc.scale(b.rx * W / 100, b.ry * H / 100);
-            const g = nc.createRadialGradient(0, 0, 0, 0, 0, 100);
-            g.addColorStop(0,   `rgba(${b.r},${b.g},${b.b},${b.a})`);
-            g.addColorStop(0.5, `rgba(${b.r},${b.g},${b.b},${b.a * 0.4})`);
-            g.addColorStop(1,   `rgba(${b.r},${b.g},${b.b},0)`);
-            nc.fillStyle = g;
-            nc.beginPath();
-            nc.arc(0, 0, 100, 0, Math.PI * 2);
-            nc.fill();
-            nc.restore();
-        });
-
-        // galactic core bright center
-        const core = nc.createRadialGradient(W*0.5, H*0.48, 0, W*0.5, H*0.48, W*0.18);
-        core.addColorStop(0,   'rgba(255,240,200,0.13)');
-        core.addColorStop(0.4, 'rgba(200,160,255,0.07)');
-        core.addColorStop(1,   'rgba(0,0,0,0)');
-        nc.fillStyle = core;
-        nc.fillRect(0, 0, W, H);
-    }
-    buildNebula();
-    window.addEventListener('resize', buildNebula);
-
-    // ---- Render loop ----
-    let t = 0;
-    function draw() {
-        requestAnimationFrame(draw);
-        t += 0.016;
-
-        // smooth mouse follow
-        mouse.x += (targetMouse.x - mouse.x) * 0.04;
-        mouse.y += (targetMouse.y - mouse.y) * 0.04;
-
-        // Sky gradient
-        const bg = ctx.createLinearGradient(0, 0, W * 0.6, H);
-        bg.addColorStop(0,   '#08112a');
-        bg.addColorStop(0.3, '#0c1535');
-        bg.addColorStop(0.6, '#120920');
-        bg.addColorStop(1,   '#0a1428');
-        ctx.fillStyle = bg;
-        ctx.fillRect(0, 0, W, H);
-
-        // Nebula layer
-        ctx.drawImage(nebulaCanvas, 0, 0);
-
-        // Stars with parallax
-        layers.forEach((stars, li) => {
-            const parallax = [0.012, 0.028, 0.05][li];
-            stars.forEach(s => {
-                const px = s.bx * W + (mouse.x - 0.5) * W * parallax;
-                const py = s.by * H + (mouse.y - 0.5) * H * parallax;
-                const tw = Math.sin(t * s.twinkleSpeed + s.twinklePhase) * 0.5 + 0.5;
-                const alpha = s.baseAlpha * (0.55 + 0.45 * tw);
-
-                ctx.beginPath();
-                ctx.arc(px, py, s.r, 0, Math.PI * 2);
-                ctx.fillStyle = s.color;
-                ctx.globalAlpha = alpha;
-                ctx.fill();
-
-                // subtle cross-bloom on brighter near stars
-                if (li === 2 && s.r > 2) {
-                    ctx.globalAlpha = alpha * 0.18;
-                    ctx.strokeStyle = s.color;
-                    ctx.lineWidth = 0.5;
-                    ctx.beginPath();
-                    ctx.moveTo(px - s.r * 3, py); ctx.lineTo(px + s.r * 3, py);
-                    ctx.moveTo(px, py - s.r * 3); ctx.lineTo(px, py + s.r * 3);
-                    ctx.stroke();
-                }
-                ctx.globalAlpha = 1;
-            });
-        });
-
-        // Shooting stars
-        shooters = shooters.filter(s => s.life > 0);
-        shooters.forEach(s => {
-            s.x += s.vx * 2.2;
-            s.y += s.vy * 2.2;
-            s.life -= 0.022;
-            const alpha = Math.max(0, s.life);
-            const grad = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * s.len * 0.5, s.y - s.vy * s.len * 0.5);
-            grad.addColorStop(0,   `rgba(255,255,255,${alpha})`);
-            grad.addColorStop(0.3, `rgba(180,220,255,${alpha * 0.5})`);
-            grad.addColorStop(1,   'rgba(255,255,255,0)');
-            ctx.beginPath();
-            ctx.moveTo(s.x, s.y);
-            ctx.lineTo(s.x - s.vx * s.len * 0.5, s.y - s.vy * s.len * 0.5);
-            ctx.strokeStyle = grad;
-            ctx.lineWidth = 1.5;
-            ctx.globalAlpha = 1;
-            ctx.stroke();
-        });
-    }
-    draw();
-})();
 
 // ---- Ripple on card click ----
 document.querySelectorAll('.card').forEach(card => {
@@ -422,8 +486,183 @@ document.getElementById('spreadBtn').addEventListener('click', () => {
     homeEl.classList.add('hidden');
     document.getElementById('spreadPage').classList.remove('hidden');
 });
+
+// Sidebar nav links
+document.getElementById('sideRng').addEventListener('click', () => {
+    document.querySelector('.quantum h2').innerText = 'Quantum RNG (Qiskit)';
+    document.querySelector('.classical h2').innerText = 'Classical RNG';
+    homeEl.classList.add('hidden');
+    document.getElementById('rngPage').classList.remove('hidden');
+    window.currentMode = 'rng';
+});
+document.getElementById('sidePwd').addEventListener('click', () => {
+    document.querySelector('.quantum h2').innerText = 'Quantum Password Generator';
+    document.querySelector('.classical h2').innerText = 'Classical Password Generator';
+    homeEl.classList.add('hidden');
+    document.getElementById('rngPage').classList.remove('hidden');
+    window.currentMode = 'password';
+});
+document.getElementById('sideLottery').addEventListener('click', () => {
+    homeEl.classList.add('hidden');
+    document.getElementById('lotteryPage').classList.remove('hidden');
+});
+document.getElementById('sideSpread').addEventListener('click', () => {
+    homeEl.classList.add('hidden');
+    document.getElementById('spreadPage').classList.remove('hidden');
+});
 </script>
 
 <script src="script.js"></script>
+
+
+
+<script>
+(function(){
+  const cv=document.getElementById('qBg'),cx=cv.getContext('2d');
+  function rsz(){cv.width=innerWidth;cv.height=innerHeight;}
+  rsz();window.addEventListener('resize',rsz);
+  const W=()=>cv.width,H=()=>cv.height;
+
+  const pts=Array.from({length:44},()=>({
+    x:Math.random(),y:Math.random(),
+    vx:(Math.random()-.5)*.00032,vy:(Math.random()-.5)*.00032,
+    r:1.8+Math.random()*2.2,
+    ph:Math.random()*6.28,phSpd:0.018+Math.random()*0.02,
+    col:['#00d4ff','#a855f7','#7c4dff','#e879f9'][Math.floor(Math.random()*4)],
+    pair:-1
+  }));
+  for(let i=0;i<pts.length-1;i+=2){pts[i].pair=i+1;pts[i+1].pair=i;}
+
+  const wires=Array.from({length:8},(_,i)=>({
+    yF:.05+i*.125,
+    pulses:[{x:Math.random()*2000,spd:.38+Math.random()*.52},{x:Math.random()*1000,spd:.26+Math.random()*.36}]
+  }));
+
+  const atoms=[
+    {xF:.06,yF:.25,shells:[{r:22,spd:.022,a:0,col:'#00d4ff'},{r:36,spd:-.014,a:2,col:'#a855f7'}]},
+    {xF:.93,yF:.75,shells:[{r:18,spd:.019,a:1.5,col:'#7c4dff'},{r:30,spd:-.011,a:4,col:'#00d4ff'}]},
+    {xF:.5,yF:.06,shells:[{r:14,spd:.026,a:0.5,col:'#e879f9'}]},
+  ];
+
+  const qubits=[
+    {xF:.15,yF:.78,r:18,spn:.016,ang:0.3,col:'#00d4ff'},
+    {xF:.87,yF:.18,r:16,spn:-.013,ang:2.1,col:'#a855f7'},
+  ];
+
+  const gates=[
+    {sym:'H',xF:.03,yF:.42},{sym:'X',xF:.97,yF:.58},
+    {sym:'|ψ⟩',xF:.5,yF:.97},{sym:'Z',xF:.76,yF:.03},
+  ];
+
+  let t=0;
+  function frame(){
+    const w=W(),h=H();
+    cx.clearRect(0,0,w,h);
+
+    wires.forEach(wl=>{
+      const y=wl.yF*h;
+      cx.beginPath();cx.strokeStyle='rgba(124,77,255,0.05)';cx.lineWidth=.6;cx.moveTo(0,y);cx.lineTo(w,y);cx.stroke();
+      wl.pulses.forEach(p=>{
+        p.x+=p.spd;if(p.x>w+55)p.x=-55;
+        const g=cx.createRadialGradient(p.x,y,0,p.x,y,24);
+        g.addColorStop(0,'rgba(0,212,255,0.35)');g.addColorStop(1,'transparent');
+        cx.beginPath();cx.arc(p.x,y,24,0,6.28);cx.fillStyle=g;cx.fill();
+        cx.beginPath();cx.arc(p.x,y,2.2,0,6.28);cx.fillStyle='#00d4ff';cx.fill();
+      });
+    });
+
+    atoms.forEach(a=>{
+      const ax=a.xF*w,ay=a.yF*h;
+      cx.beginPath();cx.arc(ax,ay,4,0,6.28);cx.fillStyle='rgba(255,255,255,0.4)';cx.fill();
+      a.shells.forEach(s=>{
+        s.a+=s.spd;
+        cx.save();cx.translate(ax,ay);cx.rotate(s.a*0.25);cx.scale(1,0.3);
+        cx.beginPath();cx.arc(0,0,s.r,0,6.28);cx.restore();
+        cx.strokeStyle=s.col+'22';cx.lineWidth=.8;cx.stroke();
+        const ex=ax+Math.cos(s.a)*s.r,ey=ay+Math.sin(s.a)*s.r*0.3;
+        const eg=cx.createRadialGradient(ex,ey,0,ex,ey,9);
+        eg.addColorStop(0,s.col+'55');eg.addColorStop(1,'transparent');
+        cx.beginPath();cx.arc(ex,ey,9,0,6.28);cx.fillStyle=eg;cx.fill();
+        cx.beginPath();cx.arc(ex,ey,2.8,0,6.28);cx.fillStyle=s.col+'cc';cx.fill();
+      });
+    });
+
+    qubits.forEach(q=>{
+      q.ang+=q.spn;
+      const qx=q.xF*w,qy=q.yF*h;
+      cx.beginPath();cx.arc(qx,qy,q.r,0,6.28);cx.strokeStyle=q.col+'22';cx.lineWidth=.8;cx.stroke();
+      cx.save();cx.translate(qx,qy);cx.scale(1,0.3);cx.beginPath();cx.arc(0,0,q.r,0,6.28);cx.restore();
+      cx.strokeStyle=q.col+'18';cx.lineWidth=.7;cx.stroke();
+      const vx=Math.cos(q.ang)*q.r*.85,vy=Math.sin(q.ang)*q.r*.3;
+      cx.beginPath();cx.moveTo(qx,qy);cx.lineTo(qx+vx,qy+vy);cx.strokeStyle=q.col+'99';cx.lineWidth=1.4;cx.stroke();
+      cx.beginPath();cx.arc(qx+vx,qy+vy,2.2,0,6.28);cx.fillStyle=q.col;cx.fill();
+    });
+
+    for(let i=0;i<pts.length;i++){
+      const p=pts[i];
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>1)p.vx*=-1;
+      if(p.y<0||p.y>1)p.vy*=-1;
+      p.ph+=p.phSpd;
+
+      if(p.pair>i){
+        const q=pts[p.pair];
+        const px1=p.x*w,py1=p.y*h,px2=q.x*w,py2=q.y*h;
+        const dist=Math.hypot(px1-px2,py1-py2);
+        const alpha=(0.09+0.07*Math.sin(t*0.038+i))*(1-Math.min(dist,420)/420);
+        if(alpha>0.01){
+          const mx=(px1+px2)/2,my=(py1+py2)/2;
+          const perp=dist*0.22;
+          const cpx=mx+(py2-py1)/dist*perp,cpy=my-(px2-px1)/dist*perp;
+          cx.beginPath();cx.moveTo(px1,py1);cx.quadraticCurveTo(cpx,cpy,px2,py2);
+          cx.strokeStyle=`rgba(168,85,247,${alpha})`;cx.lineWidth=0.7;cx.stroke();
+          const bT=((t*0.012+i*0.3)%1);
+          const bx=Math.pow(1-bT,2)*px1+2*(1-bT)*bT*cpx+bT*bT*px2;
+          const by=Math.pow(1-bT,2)*py1+2*(1-bT)*bT*cpy+bT*bT*py2;
+          const bg=cx.createRadialGradient(bx,by,0,bx,by,5);
+          bg.addColorStop(0,'rgba(168,85,247,0.9)');bg.addColorStop(1,'transparent');
+          cx.beginPath();cx.arc(bx,by,5,0,6.28);cx.fillStyle=bg;cx.fill();
+        }
+      }
+
+      for(let j=i+1;j<pts.length;j++){
+        if(pts[j].pair===i)continue;
+        const q=pts[j];
+        const d=Math.hypot((p.x-q.x)*w,(p.y-q.y)*h);
+        if(d<85){cx.beginPath();cx.strokeStyle=`rgba(124,77,255,${0.09*(1-d/85)})`;cx.lineWidth=.4;cx.moveTo(p.x*w,p.y*h);cx.lineTo(q.x*w,q.y*h);cx.stroke();}
+      }
+
+      const hR=10+4*Math.sin(p.ph);
+      const hg=cx.createRadialGradient(p.x*w,p.y*h,0,p.x*w,p.y*h,hR);
+      hg.addColorStop(0,p.col+'2a');hg.addColorStop(1,'transparent');
+      cx.beginPath();cx.arc(p.x*w,p.y*h,hR,0,6.28);cx.fillStyle=hg;cx.fill();
+      cx.beginPath();cx.arc(p.x*w,p.y*h,p.r,0,6.28);cx.fillStyle=p.col+'bb';cx.fill();
+    }
+
+    gates.forEach((g,i)=>{
+      const pulse=0.18+0.09*Math.sin(t*0.02+i*1.4);
+      cx.save();cx.globalAlpha=pulse;
+      const gx=g.xF*w,gy=g.yF*h;
+      cx.font=`bold ${g.sym.length>1?9:12}px monospace`;
+      const tw=cx.measureText(g.sym).width+10;
+      cx.strokeStyle=i%2===0?'rgba(0,212,255,0.45)':'rgba(168,85,247,0.45)';
+      cx.lineWidth=.8;cx.strokeRect(gx-tw/2,gy-10,tw,20);
+      cx.fillStyle=i%2===0?'#00d4ff':'#c084fc';
+      cx.textAlign='center';cx.textBaseline='middle';
+      cx.fillText(g.sym,gx,gy);
+      cx.restore();
+    });
+
+    t++;requestAnimationFrame(frame);
+  }
+  frame();
+})();
+document.getElementById('aboutBtn').addEventListener('click', () => {
+    window.location.href = 'about.html';
+});
+document.getElementById('sideAbout').addEventListener('click', () => {
+    window.location.href = 'about.html';
+});
+</script>
 </body>
 </html>

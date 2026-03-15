@@ -1,4 +1,3 @@
-
 # quantum.py
 
 from qiskit import QuantumCircuit, transpile
@@ -9,7 +8,7 @@ import random
 # Connect once when file loads
 service = QiskitRuntimeService(
     channel="ibm_quantum_platform",
-    token="ENCxzFVgt6u7OtR8U-7ZprDhlD7n9kFGomd0-BlNMwP6"
+    token="4eqv3arX6IsNKadXclyb2plDBVEYLycDiItxGsFC33By"
     
 )
 

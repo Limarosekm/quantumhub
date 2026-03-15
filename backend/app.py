@@ -1,4 +1,3 @@
-
 from quantum import quantum_random_numbers
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS

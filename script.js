@@ -1,3 +1,5 @@
+
+
 // ================== DOM REFERENCES ==================
 const home = document.getElementById("home");
 const rngPage = document.getElementById("rngPage");

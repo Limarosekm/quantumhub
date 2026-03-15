@@ -51,3 +51,30 @@ def quantum_random_numbers(count=500):
     random.shuffle(numbers)
 
     return numbers
+import string
+import random
+
+def generate_quantum_passwords(count=500, length=12):
+
+    characters = string.ascii_letters + string.digits + "!@#$%^&*"
+
+    # generate quantum random numbers
+    nums = quantum_random_numbers(count * length)
+
+    passwords = []
+    index = 0
+
+    for _ in range(count):
+
+        pwd = ""
+
+        for _ in range(length):
+
+            num = nums[index] % len(characters)
+            pwd += characters[num]
+
+            index += 1
+
+        passwords.append(pwd)
+
+    return passwords

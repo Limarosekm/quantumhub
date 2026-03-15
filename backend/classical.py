@@ -27,7 +27,20 @@ class LCG:
         b = self.generate()
         return a, b
 
+import string
+import random
 
+def generate_classical_passwords(count=500, length=12):
+
+    characters = string.ascii_letters + string.digits + "!@#$%^&*"
+
+    passwords = []
+
+    for _ in range(count):
+        pwd = ''.join(random.choice(characters) for _ in range(length))
+        passwords.append(pwd)
+
+    return passwords
 def classical_password(length=12):
     characters = string.ascii_letters + string.digits + "!@#$%^&*"
     return ''.join(_random.choice(characters) for _ in range(length))

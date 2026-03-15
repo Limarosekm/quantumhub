@@ -29,7 +29,8 @@ let currentMode = "rng";
 // ================== NAVIGATION ==================
 
 // nav handled inline
-document.getElementById("rngBtn") && (document.getElementById("rngBtn").onclick = null); function unused_red() {
+document.getElementById("rngBtn") && (document.getElementById("rngBtn").onclick = null); function unused_red(){
+
     currentMode = "rng";
 
     document.querySelector(".quantum h2").innerText = "Quantum RNG (Qiskit)";
@@ -37,7 +38,7 @@ document.getElementById("rngBtn") && (document.getElementById("rngBtn").onclick 
 
     home.classList.add("hidden");
     rngPage.classList.remove("hidden");
-};
+}
 
 function unused_blue() {
     currentMode = "password";
@@ -70,39 +71,123 @@ analysisBackBtn.onclick = () => {
 
 // ================== GENERATE ==================
 
+// ================= GENERATE BUTTON =================
+
+// QUANTUM GENERATE
 document.querySelector(".quantum .generate").onclick = () => {
 
-    fetch("http://127.0.0.1:5000/quantum/4096")
+    // RNG LAB MODE
+    if(currentMode === "rng"){
+
+        fetch("http://127.0.0.1:5000/quantum/4096")
         .then(res => res.json())
         .then(data => {
 
             const values = data.random_numbers;
 
             quantumHistory = values;
-quantumBinary = convertToBinary(values);
-quantumBinaryMode = false;
+            quantumBinary = convertToBinary(values);
+            quantumBinaryMode = false;
 
             quantumOutput.innerText = values.join(", ");
-
         });
+
+    }
+
+    // PASSWORD MODE
+    else if(currentMode === "password"){
+
+        fetch("http://127.0.0.1:5000/quantum-passwords")
+        .then(res => res.json())
+        .then(data => {
+
+            const passwords = data.passwords;
+
+            quantumOutput.innerText = passwords.join("\n");
+
+            let numbers = [];
+
+            passwords.forEach(p=>{
+                for(let c of p){
+                    numbers.push(c.charCodeAt(0));
+                }
+            });
+
+            quantumHistory = numbers;
+            quantumBinary = convertToBinary(numbers);
+            quantumBinaryMode = false;
+        });
+
+    }
+
 };
 
+
+
+// CLASSICAL GENERATE
 document.querySelector(".classical .generate").onclick = () => {
 
-    fetch("http://127.0.0.1:5000/classical/4096")
+    // RNG LAB MODE
+    if(currentMode === "rng"){
+
+        fetch("http://127.0.0.1:5000/classical/4096")
         .then(res => res.json())
         .then(data => {
 
             const values = data.random_numbers;
 
             classicalHistory = values;
-classicalBinary = convertToBinary(values);
-classicalBinaryMode = false;
+            classicalBinary = convertToBinary(values);
+            classicalBinaryMode = false;
 
             classicalOutput.innerText = values.join(", ");
-
         });
+
+    }
+
+    // PASSWORD MODE
+    else if(currentMode === "password"){
+
+        fetch("http://127.0.0.1:5000/classical-passwords")
+        .then(res => res.json())
+        .then(data => {
+
+            const passwords = data.passwords;
+
+            classicalOutput.innerText = passwords.join("\n");
+
+            let numbers = [];
+
+            passwords.forEach(p=>{
+                for(let c of p){
+                    numbers.push(c.charCodeAt(0));
+                }
+            });
+
+            classicalHistory = numbers;
+            classicalBinary = convertToBinary(numbers);
+            classicalBinaryMode = false;
+        });
+
+    }
+
 };
+
+// ================= PASSWORD GENERATION =================
+
+document.getElementById("passwordBtn").onclick = () => {
+
+    currentMode = "password";
+
+    document.querySelector(".quantum h2").innerText = "Quantum Password Generator";
+    document.querySelector(".classical h2").innerText = "Classical Password Generator";
+
+    home.classList.add("hidden");
+    rngPage.classList.remove("hidden");
+};
+
+
+
 
 // ================== CONVERSIONS ==================
 

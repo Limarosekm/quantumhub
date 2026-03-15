@@ -347,6 +347,9 @@ body {
     position: relative;
     z-index: 1;
     color: #dde4ff;
+     max-height: 450px;   /* limits password height */
+    overflow-y: auto;    /* enables vertical scroll */
+    padding-right: 6px;  /* prevents text hiding behind scrollbar */
 }
 .classical .output { color: #b0f0e0; }
 
@@ -1489,3 +1492,4 @@ body::before{
 
 .pred-bad  { background: linear-gradient(90deg, #ff6b6b, #ff4444); }
 .pred-good { background: linear-gradient(90deg, #00d4ff, #7c4dff); }
+

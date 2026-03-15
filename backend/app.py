@@ -8,6 +8,10 @@ from collections import Counter
 from openpyxl import Workbook
 from openpyxl.chart import BarChart, Reference
 import random
+# this is for passsword
+from classical import generate_classical_passwords
+from quantum import generate_quantum_passwords
+# end pswd
 
 app = Flask(__name__)
 CORS(app)
@@ -18,6 +22,29 @@ lcg = LCG(seed=98765)
 @app.route("/")
 def home():
     return "Backend running"
+
+# classical api pswd
+@app.route("/classical-passwords")
+def classical_passwords():
+
+    passwords = generate_classical_passwords(500)
+
+    return jsonify({
+        "type": "Classical Password Generator",
+        "passwords": passwords
+    })
+
+# quantum api pswd
+@app.route("/quantum-passwords")
+def quantum_passwords():
+
+    passwords = generate_quantum_passwords(500)
+
+    return jsonify({
+        "type": "Quantum Password Generator (IBM Hardware)",
+        "passwords": passwords
+    })
+
 
 
 # ================= CLASSICAL RNG =================

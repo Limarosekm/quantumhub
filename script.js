@@ -1604,39 +1604,7 @@ function entropyHeatmap(bits, canvasId){
 }
 
 
-// ================== 2D CORRELATION PLOT ==================
 
-function correlationPlot2D(numbers, canvasId){
-    const existing = Chart.getChart(canvasId);
-    if(existing) existing.destroy();
-
-    const points = [];
-    for(let i = 0; i < numbers.length - 1; i++){
-        points.push({ x: numbers[i], y: numbers[i+1] });
-    }
-
-    new Chart(document.getElementById(canvasId), {
-        type: "scatter",
-        data: {
-            datasets:[{
-                label: "n vs n+1",
-                data: points,
-                pointRadius: 1.5,
-                pointBackgroundColor: canvasId.includes("Classical")
-                    ? "rgba(46,204,113,0.5)"
-                    : "rgba(155,89,182,0.5)"
-            }]
-        },
-        options:{
-            animation: false,
-            scales:{
-                x:{ min:0, max:255, title:{ display:true, text:"value[n]", color:"#8899bb" } },
-                y:{ min:0, max:255, title:{ display:true, text:"value[n+1]", color:"#8899bb" } }
-            },
-            plugins:{ legend:{ display:false } }
-        }
-    });
-}
 
 // ================== ADVANCED TESTS ==================
 
@@ -1702,45 +1670,6 @@ function gapTest(data) {
 
 // ================== AUTOCORRELATION MULTI-LAG CHART ==================
 
-function autocorrLagChart(data, canvasId, color) {
-    const existing = Chart.getChart(canvasId);
-    if (existing) existing.destroy();
-
-    const mean = data.reduce((a,b)=>a+b,0)/data.length;
-    const denom = data.reduce((s,v)=>s+(v-mean)**2,0);
-    const lags = [], vals = [];
-
-    for (let lag = 1; lag <= 20; lag++) {
-        let num = 0;
-        for (let i = 0; i < data.length - lag; i++) num += (data[i]-mean)*(data[i+lag]-mean);
-        lags.push(lag);
-        vals.push((num/denom).toFixed(4));
-    }
-
-    new Chart(document.getElementById(canvasId), {
-        type: "bar",
-        data: {
-            labels: lags,
-            datasets: [{
-                label: "Autocorrelation",
-                data: vals,
-                backgroundColor: color,
-                borderColor: color,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { min: -0.1, max: 0.1,
-                     title: { display: true, text: "Correlation", color: "#8899bb" } },
-                x: { title: { display: true, text: "Lag", color: "#8899bb" } }
-            }
-        }
-    });
-}
 
 // ================== VERDICT CARD ==================
 

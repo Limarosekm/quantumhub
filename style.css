@@ -1494,3 +1494,180 @@ body::before{
 .pred-bad  { background: linear-gradient(90deg, #ff6b6b, #ff4444); }
 .pred-good { background: linear-gradient(90deg, #00d4ff, #7c4dff); }
 
+
+/* ================== TREASURE HUNT PAGE ================== */
+.full-page {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    background: linear-gradient(145deg, #0d1535 0%, #1a1040 45%, #0b1e38 100%);
+    color: #dde4ff;
+    overflow-y: auto;
+    padding: 24px 20px 60px;
+    font-family: 'Space Mono', monospace;
+}
+
+.full-page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 20% 20%, rgba(192,132,252,0.12) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 80%, rgba(0,212,255,0.08) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Controls row: RNG selector + start button */
+.treasure-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 18px auto 12px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+}
+
+.treasure-controls select {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(192,132,252,0.35);
+    background: rgba(30,20,60,0.7);
+    color: #c084fc;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    cursor: pointer;
+    outline: none;
+    backdrop-filter: blur(8px);
+    transition: 0.2s;
+}
+.treasure-controls select:hover { border-color: #c084fc; }
+
+.big-generate-btn {
+    padding: 10px 26px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #a855f7, #7c4dff);
+    color: white;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(168,85,247,0.4);
+    transition: 0.2s;
+    letter-spacing: 0.5px;
+}
+.big-generate-btn:hover { transform: scale(1.05); box-shadow: 0 8px 28px rgba(168,85,247,0.6); }
+
+/* Status & clue text */
+#treasureStatus {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #b0a8ff;
+    margin: 10px auto 4px;
+    letter-spacing: 0.5px;
+    min-height: 1.4em;
+    position: relative;
+    z-index: 2;
+}
+
+#treasureClue {
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    min-height: 1.6em;
+    margin-bottom: 6px;
+    transition: color 0.4s;
+    position: relative;
+    z-index: 2;
+}
+
+#treasureMoves {
+    text-align: center;
+    color: #a8b8ff;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 2;
+}
+
+/* 5×5 game grid */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    max-width: 380px;
+    margin: 0 auto 20px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Individual cells */
+.th-cell {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    cursor: pointer;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(192,132,252,0.18);
+    transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    user-select: none;
+    min-height: 60px;
+}
+.th-cell:hover {
+    background: rgba(192,132,252,0.14);
+    border-color: rgba(192,132,252,0.55);
+    transform: scale(1.06);
+    box-shadow: 0 0 18px rgba(192,132,252,0.25);
+}
+
+/* Player position */
+.th-cell.th-player {
+    background: rgba(0,212,255,0.15);
+    border-color: #00d4ff;
+    box-shadow: 0 0 22px rgba(0,212,255,0.4);
+    animation: playerPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes playerPulse {
+    0%, 100% { box-shadow: 0 0 18px rgba(0,212,255,0.4); }
+    50%       { box-shadow: 0 0 35px rgba(0,212,255,0.75); }
+}
+
+/* Treasure cell (revealed on win) */
+.th-cell.th-treasure {
+    background: rgba(255,215,0,0.18);
+    border-color: #ffd700;
+    box-shadow: 0 0 28px rgba(255,215,0,0.55);
+    animation: treasureGlow 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes treasureGlow {
+    from { box-shadow: 0 0 20px rgba(255,215,0,0.5); }
+    to   { box-shadow: 0 0 45px rgba(255,215,0,0.9); }
+}
+
+/* Trap cell (revealed on game over) */
+.th-cell.th-trap {
+    background: rgba(255,60,60,0.18);
+    border-color: #ff4444;
+    box-shadow: 0 0 20px rgba(255,60,60,0.45);
+}
+
+/* Legend below grid */
+.game-legend {
+    text-align: center;
+    font-size: 0.72rem;
+    color: rgba(180,160,255,0.45);
+    letter-spacing: 1px;
+    margin-top: 8px;
+    line-height: 1.9;
+    position: relative;
+    z-index: 2;
+}

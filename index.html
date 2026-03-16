@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -256,11 +253,7 @@
         </div>
     </div>
 
-    <!-- Verdict card -->
-    <div id="verdictCard" style="margin:0 0 20px 0; grid-column:1/-1; background:rgba(0,0,0,0.35); border-radius:18px; padding:22px 30px; border:1px solid rgba(140,120,255,0.25);">
-        <h2 style="text-align:center;font-family:'Orbitron',sans-serif;font-size:0.85rem;letter-spacing:3px;color:#ffe066;margin-bottom:14px;">⚡ TEST VERDICT</h2>
-        <div id="verdictRows" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;"></div>
-    </div>
+    
 
     <!-- Bitstream side by side -->
     <div class="analysis-card" style="grid-column:1/-1;">
@@ -279,25 +272,9 @@
 
     
 
-    <!-- Multi-Lag Autocorrelation -->
-    <div class="analysis-section" style="margin:20px 0;">
-        <h2>Multi-Lag Autocorrelation <span style="font-size:0.6rem;opacity:0.6;">(lags 1–40 — LCG shows periodic spikes)</span></h2>
-        <div class="analysis-row">
-            <div class="analysis-box"><h3>Classical (LCG)</h3><canvas id="lagClassical"></canvas></div>
-            <div class="analysis-box"><h3>Quantum</h3><canvas id="lagQuantum"></canvas></div>
-        </div>
-        <p class="analysis-text">Each bar shows how much value[n] predicts value[n+lag]. LCG generators show spikes at regular lags due to their linear recurrence structure. Quantum randomness stays flat near zero across all lags — each number is truly independent of all previous ones.</p>
-    </div>
+   
 
-    <!-- 2D Correlation Plot -->
-    <div class="analysis-section" style="margin:30px 0;">
-        <h2>2D Correlation Plot <span style="font-size:0.6rem;opacity:0.6;">(successive pairs — LCG shows diagonal structure)</span></h2>
-        <div class="analysis-row">
-            <div class="analysis-box"><h3>Classical (LCG)</h3><canvas id="corrClassical"></canvas></div>
-            <div class="analysis-box"><h3>Quantum</h3><canvas id="corrQuantum"></canvas></div>
-        </div>
-        <p class="analysis-text">Each point plots value[n] vs value[n+1]. True randomness fills the square uniformly. LCG generators leave diagonal lines or banding patterns — a structural weakness not present in quantum randomness.</p>
-    </div>
+   
 
     <!-- Monte Carlo -->
     <div class="analysis-section">
@@ -442,6 +419,87 @@
         5 × 5 grid &nbsp;|&nbsp; 🪙 = Treasure &nbsp;|&nbsp; 💀 = Trap<br>
         Click adjacent cells to move. Find the treasure, avoid the traps!
     </div>
+
+    <!-- ── TEST ANALYSIS ── -->
+    <div class="th-analysis-wrap">
+        <div class="th-analysis-header">
+            <h2 class="th-analysis-title">📊 RNG Test Analysis</h2>
+            <p class="th-analysis-sub">Simulate 200 automated games per RNG type and compare statistical outcomes</p>
+            <button id="runTreasureAnalysis" class="big-generate-btn" style="margin-top:10px;">
+                ⚡ Run 200-Game Simulation
+            </button>
+        </div>
+
+        <div id="thAnalysisResults" class="th-analysis-results hidden">
+
+            
+
+            <!-- ═══ TEST 1: TRAP DISTRIBUTION ═══ -->
+            <div class="th-test-block">
+                <div class="th-test-header">
+                    <span class="th-test-num">TEST 01</span>
+                    <h3 class="th-test-title">💀 Trap Distribution Analysis</h3>
+                    <p class="th-test-desc">How evenly are traps spread across the 5×5 board? Uniform spread = fairer game. Clustered traps (LCG bias) create unfair hot zones.</p>
+                </div>
+                <div class="th-test-body">
+                    <div class="th-test-panel th-panel-classical">
+                        <div class="th-panel-tag classical-tag">🖥️ CLASSICAL LCG</div>
+                        <canvas id="thTrapHeatC" width="200" height="200" style="image-rendering:pixelated;width:200px;height:200px;border-radius:10px;"></canvas>
+                        <div class="th-heat-stats">
+                            <div class="th-heat-stat"><span id="thC-trapStdDev">—</span><small>Std Dev</small></div>
+                            <div class="th-heat-stat"><span id="thC-trapMax">—</span><small>Max Cell</small></div>
+                            <div class="th-heat-stat"><span id="thC-trapCluster">—</span><small>Cluster Score</small></div>
+                        </div>
+                    </div>
+                    <div class="th-test-vs">VS</div>
+                    <div class="th-test-panel th-panel-quantum">
+                        <div class="th-panel-tag quantum-tag">⚛️ QUANTUM CSPRNG</div>
+                        <canvas id="thTrapHeatQ" width="200" height="200" style="image-rendering:pixelated;width:200px;height:200px;border-radius:10px;"></canvas>
+                        <div class="th-heat-stats">
+                            <div class="th-heat-stat"><span id="thQ-trapStdDev">—</span><small>Std Dev</small></div>
+                            <div class="th-heat-stat"><span id="thQ-trapMax">—</span><small>Max Cell</small></div>
+                            <div class="th-heat-stat"><span id="thQ-trapCluster">—</span><small>Cluster Score</small></div>
+                        </div>
+                    </div>
+                    <div class="th-test-insight" id="thTrapInsight">—</div>
+                </div>
+            </div>
+
+            <!-- ═══ TEST 2: RANDOM WALK ═══ -->
+            <div class="th-test-block">
+                <div class="th-test-header">
+                    <span class="th-test-num">TEST 02</span>
+                    <h3 class="th-test-title">🚶 Random Walk Test</h3>
+                    <p class="th-test-desc">Each RNG number drives a step: +1 if the bit is 1, −1 if 0. True randomness walks near zero (balanced). LCG shows drift — a hidden bias exposing its deterministic nature.</p>
+                </div>
+                <div class="th-test-body th-walk-body">
+                    <div class="th-test-panel th-panel-classical" style="flex:1;min-width:260px;">
+                        <div class="th-panel-tag classical-tag">🖥️ CLASSICAL LCG</div>
+                        <canvas id="thWalkC" height="180" style="width:100%;border-radius:8px;"></canvas>
+                        <div class="th-heat-stats">
+                            <div class="th-heat-stat"><span id="thC-walkDrift">—</span><small>Final Drift</small></div>
+                            <div class="th-heat-stat"><span id="thC-walkMax">—</span><small>Peak</small></div>
+                            <div class="th-heat-stat"><span id="thC-walkZero">—</span><small>Zero Crossings</small></div>
+                        </div>
+                    </div>
+                    <div class="th-test-vs">VS</div>
+                    <div class="th-test-panel th-panel-quantum" style="flex:1;min-width:260px;">
+                        <div class="th-panel-tag quantum-tag">⚛️ QUANTUM CSPRNG</div>
+                        <canvas id="thWalkQ" height="180" style="width:100%;border-radius:8px;"></canvas>
+                        <div class="th-heat-stats">
+                            <div class="th-heat-stat"><span id="thQ-walkDrift">—</span><small>Final Drift</small></div>
+                            <div class="th-heat-stat"><span id="thQ-walkMax">—</span><small>Peak</small></div>
+                            <div class="th-heat-stat"><span id="thQ-walkZero">—</span><small>Zero Crossings</small></div>
+                        </div>
+                    </div>
+                    <div class="th-test-insight" id="thWalkInsight">—</div>
+                </div>
+            </div>
+
+            
+
+        </div><!-- /thAnalysisResults -->
+    </div><!-- /th-analysis-wrap -->
 </div>
 <!-- ================= HOME SCREEN SCRIPTS ================= -->
 <script>

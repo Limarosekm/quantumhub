@@ -1,5 +1,3 @@
-
-
 // ================== DOM REFERENCES ==================
 const home = document.getElementById("home");
 const rngPage = document.getElementById("rngPage");
@@ -2281,3 +2279,348 @@ function thShowWinEffect() {
         }
     }, 180);
 }
+
+// ================== TREASURE HUNT TEST ANALYSIS ==================
+
+let _thWalkChartC = null;
+let _thWalkChartQ = null;
+
+document.getElementById("runTreasureAnalysis")?.addEventListener("click", () => {
+    runTreasureAnalysis();
+});
+
+function thSimulateGames(rngFn, trials = 200) {
+    const GRID = 25, START = 12;
+    let wins = 0, traps = 0, forfeits = 0;
+    const movesOnWin = [];
+    const trapFreq      = new Array(GRID).fill(0);
+    const treasureFreq  = new Array(GRID).fill(0);
+    const trapProxList  = [];
+    const entropyList   = [];
+
+    for (let g = 0; g < trials; g++) {
+        const nums = rngFn(20);
+        let idx = 0;
+
+        let tPos = nums[idx++ % nums.length] % GRID;
+        while (tPos === START) tPos = nums[idx++ % nums.length] % GRID;
+
+        const trapsSet = new Set();
+        let attempts = 0;
+        while (trapsSet.size < 4 && attempts < 100) {
+            const p = nums[idx++ % nums.length] % GRID;
+            if (p !== START && p !== tPos && !trapsSet.has(p)) trapsSet.add(p);
+            attempts++;
+        }
+
+        treasureFreq[tPos]++;
+        trapsSet.forEach(t => trapFreq[t]++);
+
+        const tRow = Math.floor(tPos / 5), tCol = tPos % 5;
+        let minTrapDist = Infinity;
+        for (const tr of trapsSet) {
+            const r = Math.floor(tr / 5), c = tr % 5;
+            const d = Math.abs(r - tRow) + Math.abs(c - tCol);
+            if (d < minTrapDist) minTrapDist = d;
+        }
+        trapProxList.push(minTrapDist);
+
+        const occupied = [tPos, ...trapsSet];
+        const cellProb = 1 / occupied.length;
+        const ent = -occupied.length * cellProb * Math.log2(cellProb + 1e-12);
+        entropyList.push(ent);
+
+        // Simulate AI player
+        let pos = START, movesCount = 0, outcome = "forfeit";
+        const MAX_MOVES = 40;
+        while (movesCount < MAX_MOVES) {
+            const row = Math.floor(pos / 5), col = pos % 5;
+            const adj = [];
+            if (row > 0) adj.push(pos - 5);
+            if (row < 4) adj.push(pos + 5);
+            if (col > 0) adj.push(pos - 1);
+            if (col < 4) adj.push(pos + 1);
+            const roll = (nums[(movesCount + idx) % nums.length] % 10);
+            let next;
+            if (roll < 7) {
+                next = adj.reduce((best, c) => {
+                    const dr = Math.abs(Math.floor(c/5)-tRow), dc = Math.abs((c%5)-tCol);
+                    const bdr = Math.abs(Math.floor(best/5)-tRow), bdc = Math.abs((best%5)-tCol);
+                    return (dr+dc) < (bdr+bdc) ? c : best;
+                }, adj[0]);
+            } else {
+                next = adj[nums[(movesCount+idx+3)%nums.length] % adj.length];
+            }
+            pos = next; movesCount++;
+            if (pos === tPos) { outcome = "win"; break; }
+            if (trapsSet.has(pos)) { outcome = "trap"; break; }
+        }
+        if (outcome === "win")  { wins++; movesOnWin.push(movesCount); }
+        else if (outcome === "trap") traps++;
+        else forfeits++;
+    }
+
+    const avgMoves = movesOnWin.length ? (movesOnWin.reduce((a,b)=>a+b,0)/movesOnWin.length).toFixed(1) : "—";
+    const minMoves = movesOnWin.length ? Math.min(...movesOnWin) : "—";
+    const avgGap   = (trapProxList.reduce((a,b)=>a+b,0)/trapProxList.length).toFixed(2);
+    const avgEnt   = (entropyList.reduce((a,b)=>a+b,0)/entropyList.length).toFixed(3);
+
+    // Trap distribution stats
+    const trapMean = trapFreq.reduce((a,b)=>a+b,0) / GRID;
+    const trapStdDev = Math.sqrt(trapFreq.reduce((a,v)=>a+(v-trapMean)**2,0)/GRID).toFixed(2);
+    const trapMax = Math.max(...trapFreq);
+    // Cluster score: count adjacent pairs with both freq > mean
+    let clusterScore = 0;
+    for (let i = 0; i < GRID; i++) {
+        const row = Math.floor(i/5), col = i%5;
+        if (col < 4 && trapFreq[i] > trapMean && trapFreq[i+1] > trapMean) clusterScore++;
+        if (row < 4 && trapFreq[i] > trapMean && trapFreq[i+5] > trapMean) clusterScore++;
+    }
+
+    return {
+        wins, traps, forfeits, trials,
+        winRate:  ((wins/trials)*100).toFixed(1),
+        trapRate: ((traps/trials)*100).toFixed(1),
+        avgMoves, minMoves, avgGap, avgEnt,
+        trapFreq, trapStdDev, trapMax, clusterScore
+    };
+}
+
+// LCG — same params as Python backend
+function thClassicalRNG(count) {
+    const m = 2**31, a = 1103515245, c = 12345;
+    let state = 98765;
+    const out = [];
+    for (let i = 0; i < count; i++) {
+        state = (a * state + c) % m;
+        out.push((state >> 16) & 0xFF);
+    }
+    return out;
+}
+
+// Quantum-equivalent: Web Crypto CSPRNG
+function thQuantumRNG(count) {
+    const buf = new Uint8Array(count);
+    crypto.getRandomValues(buf);
+    return Array.from(buf);
+}
+
+// Build a random walk from numbers (bit 0 of each byte → +1/-1 step)
+function buildWalk(nums) {
+    const steps = [];
+    let pos = 0;
+    nums.forEach(n => {
+        pos += (n & 1) ? 1 : -1;
+        steps.push(pos);
+    });
+    return steps;
+}
+
+function drawHeatmap(canvasId, freq, hotColor) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const maxF = Math.max(...freq, 1);
+    for (let i = 0; i < 25; i++) {
+        const row = Math.floor(i/5), col = i%5;
+        const t = freq[i] / maxF;
+        let r, g, b;
+        if (hotColor === "red") {
+            r = Math.round(20  + t * 220);
+            g = Math.round(20  + t * 30);
+            b = Math.round(80  - t * 60);
+        } else {
+            r = Math.round(5   + t * 0);
+            g = Math.round(80  + t * 132);
+            b = Math.round(160 + t * 95);
+        }
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(col*40, row*40, 40, 40);
+        ctx.strokeStyle = "rgba(0,0,0,0.4)";
+        ctx.strokeRect(col*40, row*40, 40, 40);
+        ctx.fillStyle = t > 0.55 ? "#fff" : "rgba(255,255,255,0.6)";
+        ctx.font = `bold ${freq[i]>9?10:11}px monospace`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(freq[i], col*40+20, row*40+20);
+    }
+}
+
+function drawWalkChart(canvasId, walkData, color, label) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    if (canvas._chartInst) { canvas._chartInst.destroy(); }
+
+    const stride = Math.max(1, Math.floor(walkData.length / 300));
+    const labels = [], data = [];
+    for (let i = 0; i < walkData.length; i += stride) {
+        labels.push(i);
+        data.push(walkData[i]);
+    }
+
+    canvas._chartInst = new Chart(canvas.getContext("2d"), {
+        type: "line",
+        data: {
+            labels,
+            datasets: [{
+                label,
+                data,
+                borderColor: color,
+                backgroundColor: color.replace(")", ",0.08)").replace("rgb","rgba"),
+                pointRadius: 0,
+                borderWidth: 1.5,
+                tension: 0.2,
+                fill: true
+            }, {
+                label: "Zero",
+                data: labels.map(() => 0),
+                borderColor: "rgba(255,255,255,0.15)",
+                pointRadius: 0,
+                borderWidth: 1,
+                borderDash: [4, 4],
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: { duration: 600 },
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { display: false },
+                y: {
+                    ticks: { color: "#8ab4ff", font: { size: 9 } },
+                    grid: { color: "rgba(255,255,255,0.05)" }
+                }
+            }
+        }
+    });
+}
+
+function runTreasureAnalysis() {
+    const btn = document.getElementById("runTreasureAnalysis");
+    btn.textContent = "⏳ Simulating…";
+    btn.disabled = true;
+
+    setTimeout(() => {
+        const TRIALS = 200;
+        const WALK_N = 500;
+
+        const cStats = thSimulateGames(thClassicalRNG, TRIALS);
+        const qStats = thSimulateGames(thQuantumRNG, TRIALS);
+
+        const cWalkData = buildWalk(thClassicalRNG(WALK_N));
+        const qWalkData = buildWalk(thQuantumRNG(WALK_N));
+
+        // ── Fill stat cards ──
+        const fill = (id, val, unit="") => { const el=document.getElementById(id); if(el) el.textContent=val+unit; };
+
+        fill("thC-winRate",  cStats.winRate,  "%");
+        fill("thC-trapRate", cStats.trapRate, "%");
+        fill("thC-avgMoves", cStats.avgMoves);
+        fill("thC-minMoves", cStats.minMoves);
+        fill("thC-trapProx", cStats.avgGap+" cells");
+        fill("thC-entropy",  cStats.avgEnt+" bits");
+
+        fill("thQ-winRate",  qStats.winRate,  "%");
+        fill("thQ-trapRate", qStats.trapRate, "%");
+        fill("thQ-avgMoves", qStats.avgMoves);
+        fill("thQ-minMoves", qStats.minMoves);
+        fill("thQ-trapProx", qStats.avgGap+" cells");
+        fill("thQ-entropy",  qStats.avgEnt+" bits");
+
+        // Quantum advantage bar
+        const advTests = [
+            parseFloat(qStats.winRate) >= parseFloat(cStats.winRate),
+            parseFloat(qStats.trapRate) <= parseFloat(cStats.trapRate),
+            parseFloat(qStats.avgEnt) >= parseFloat(cStats.avgEnt),
+            parseFloat(qStats.clusterScore) <= parseFloat(cStats.clusterScore),
+            Math.abs(qWalkData[qWalkData.length-1]) <= Math.abs(cWalkData[cWalkData.length-1])
+        ];
+        const advPct = Math.round((advTests.filter(Boolean).length / advTests.length) * 100);
+        const advFill = document.getElementById("thQ-advFill");
+        if (advFill) advFill.style.width = advPct + "%";
+        fill("thQ-advPct", advPct, "%");
+
+        // ── TEST 1: Trap distribution heatmaps ──
+        drawHeatmap("thTrapHeatC", cStats.trapFreq, "red");
+        drawHeatmap("thTrapHeatQ", qStats.trapFreq, "blue");
+
+        fill("thC-trapStdDev",  cStats.trapStdDev);
+        fill("thC-trapMax",     cStats.trapMax);
+        fill("thC-trapCluster", cStats.clusterScore);
+        fill("thQ-trapStdDev",  qStats.trapStdDev);
+        fill("thQ-trapMax",     qStats.trapMax);
+        fill("thQ-trapCluster", qStats.clusterScore);
+
+        const trapWinner = parseFloat(qStats.trapStdDev) <= parseFloat(cStats.trapStdDev) ? "Quantum" : "Classical";
+        const trapInsight = document.getElementById("thTrapInsight");
+        if (trapInsight) {
+            trapInsight.innerHTML = trapWinner === "Quantum"
+                ? `<span class="th-insight-q">⚛️ Quantum</span> traps spread more evenly (σ ${qStats.trapStdDev} vs ${cStats.trapStdDev}). LCG's deterministic pattern creates hot-zone cells that appear disproportionately often.`
+                : `<span class="th-insight-c">🖥️ Classical</span> achieved tighter spread this run (σ ${cStats.trapStdDev} vs ${qStats.trapStdDev}). Quantum's spread may vary run-to-run by nature.`;
+        }
+
+        // ── TEST 2: Random walk ──
+        drawWalkChart("thWalkC", cWalkData, "rgb(46,204,113)",  "Classical LCG");
+        drawWalkChart("thWalkQ", qWalkData, "rgb(0,212,255)",   "Quantum CSPRNG");
+
+        const cDrift = cWalkData[cWalkData.length-1];
+        const qDrift = qWalkData[qWalkData.length-1];
+        const cPeak  = Math.max(...cWalkData.map(Math.abs));
+        const qPeak  = Math.max(...qWalkData.map(Math.abs));
+        const cZero  = cWalkData.filter((v,i)=>i>0 && Math.sign(v)!==Math.sign(cWalkData[i-1])).length;
+        const qZero  = qWalkData.filter((v,i)=>i>0 && Math.sign(v)!==Math.sign(qWalkData[i-1])).length;
+
+        fill("thC-walkDrift", cDrift > 0 ? "+"+cDrift : cDrift);
+        fill("thC-walkMax",   "±"+cPeak);
+        fill("thC-walkZero",  cZero);
+        fill("thQ-walkDrift", qDrift > 0 ? "+"+qDrift : qDrift);
+        fill("thQ-walkMax",   "±"+qPeak);
+        fill("thQ-walkZero",  qZero);
+
+        const walkWinner = Math.abs(qDrift) <= Math.abs(cDrift) ? "Quantum" : "Classical";
+        const walkInsight = document.getElementById("thWalkInsight");
+        if (walkInsight) {
+            walkInsight.innerHTML = walkWinner === "Quantum"
+                ? `<span class="th-insight-q">⚛️ Quantum</span> walk stays closer to zero (drift: ${qDrift>0?"+":""}${qDrift} vs ${cDrift>0?"+":""}${cDrift}). More zero crossings (${qZero} vs ${cZero}) confirm balanced bit distribution with no directional bias.`
+                : `<span class="th-insight-c">🖥️ Classical</span> walk showed less drift this run (${cDrift>0?"+":""}${cDrift} vs ${qDrift>0?"+":""}${qDrift}). LCG can occasionally produce balanced runs, but tends to drift over longer sequences.`;
+        }
+
+        // ── Verdict ──
+        const verdictEl = document.getElementById("thVerdictRows");
+        if (verdictEl) {
+            const tests = [
+                { name:"Trap Std Dev",    cVal:cStats.trapStdDev,  qVal:qStats.trapStdDev,  winner: parseFloat(qStats.trapStdDev)<=parseFloat(cStats.trapStdDev)?"quantum":"classical", note:"Lower σ = more uniform trap spread" },
+                { name:"Trap Clusters",   cVal:cStats.clusterScore, qVal:qStats.clusterScore,winner: qStats.clusterScore<=cStats.clusterScore?"quantum":"classical", note:"Fewer adjacent hot-zones = fairer board" },
+                { name:"Walk Drift",      cVal:(cDrift>0?"+":"")+cDrift, qVal:(qDrift>0?"+":"")+qDrift, winner: Math.abs(qDrift)<=Math.abs(cDrift)?"quantum":"classical", note:"Closer to 0 = no bit bias" },
+                { name:"Zero Crossings",  cVal:cZero,  qVal:qZero,  winner: qZero>=cZero?"quantum":"classical", note:"More crossings = more balanced steps" },
+                { name:"Board Entropy",   cVal:cStats.avgEnt+"b", qVal:qStats.avgEnt+"b", winner: parseFloat(qStats.avgEnt)>=parseFloat(cStats.avgEnt)?"quantum":"classical", note:"Higher entropy = more unpredictable placement" }
+            ];
+
+            let qWins = 0, cWins = 0, html = "";
+            tests.forEach(t => {
+                const isQ = t.winner === "quantum";
+                if (isQ) qWins++; else cWins++;
+                html += `<div class="th-verdict-row">
+                    <span class="th-verdict-test">${t.name}</span>
+                    <span class="th-verdict-c ${!isQ?"th-verdict-winner":""}">${t.cVal}</span>
+                    <span class="th-verdict-vs">vs</span>
+                    <span class="th-verdict-q ${isQ?"th-verdict-winner":""}">${t.qVal}</span>
+                    <span class="th-verdict-badge ${isQ?"th-badge-q":"th-badge-c"}">${isQ?"⚛️ Quantum":"🖥️ Classical"}</span>
+                    <span class="th-verdict-note">${t.note}</span>
+                </div>`;
+            });
+
+            const overall = qWins > cWins ? "⚛️ QUANTUM WINS" : qWins < cWins ? "🖥️ CLASSICAL WINS" : "🤝 DRAW";
+            const color   = qWins > cWins ? "#00d4ff" : qWins < cWins ? "#2ecc71" : "#f39c12";
+            html += `<div style="text-align:center;margin-top:18px;font-family:'Orbitron',sans-serif;font-size:0.9rem;font-weight:900;color:${color};letter-spacing:3px;">${overall} &nbsp;(${Math.max(qWins,cWins)}/${tests.length} tests)</div>`;
+            verdictEl.innerHTML = html;
+        }
+
+        document.getElementById("thAnalysisResults").classList.remove("hidden");
+        btn.textContent = "⚡ Re-run Simulation";
+        btn.disabled = false;
+    }, 30);
+}
+
+// (old duplicate removed)

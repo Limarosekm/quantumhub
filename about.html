@@ -1,13 +1,3 @@
-
-AI Overview
-HTML, CSS, and JavaScript files detail the structure and functionality for a Quantum RNG Hub interface with RNG Lab and Lottery Gen demos.
-
-Gemini
-Ask about your files
-Summarize this folder
-Analyze each file in this folder
-What can Gemini do with folders in Google Drive
-Gemini in Workspace can make mistakes. Learn more
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,7 +59,7 @@ Gemini in Workspace can make mistakes. Learn more
         /* ── HERO ── */
         .hero {
             text-align: center;
-            padding: 64px 0 48px;
+            padding: 60px 0 20px;
         }
         .hero-eyebrow {
             display: inline-block;
@@ -117,6 +107,27 @@ Gemini in Workspace can make mistakes. Learn more
             max-width: 560px;
             margin: 0 auto;
             line-height: 2.1;
+        }
+
+        /* ── SIGNATURE: LIVE QUBIT VISUAL ── */
+        .qubit-signature {
+            display: flex;
+            justify-content: center;
+            margin: 38px 0 12px;
+        }
+        .qubit-signature svg { display: block; }
+        .qubit-orbit { transform-origin: 140px 140px; }
+        .qubit-orbit.o1 { animation: orbitspin 6s linear infinite; }
+        .qubit-orbit.o2 { animation: orbitspin 9s linear infinite reverse; }
+        .qubit-orbit.o3 { animation: orbitspin 13s linear infinite; }
+        @keyframes orbitspin { to { transform: rotate(360deg); } }
+        .qubit-core { animation: corepulse 2.4s ease-in-out infinite; transform-origin: 140px 140px; }
+        @keyframes corepulse { 0%,100% { opacity: 0.75; } 50% { opacity: 1; } }
+        .bit-readout {
+            font-family: 'Space Mono', monospace;
+            font-size: 8.5px;
+            fill: rgba(180,160,255,0.55);
+            letter-spacing: 1px;
         }
 
         /* ── DIVIDER ── */
@@ -169,6 +180,85 @@ Gemini in Workspace can make mistakes. Learn more
         }
         .overview-card p:last-child { margin-bottom: 0; }
         .overview-card strong { color: #c084fc; }
+
+        /* ── STAT STRIP ── */
+        .stat-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 28px 0 24px;
+        }
+        @media (max-width: 700px) { .stat-strip { grid-template-columns: repeat(2, 1fr); } }
+        .stat-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 14px;
+            text-align: center;
+        }
+        .stat-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--gold);
+            margin-bottom: 6px;
+        }
+        .stat-label {
+            font-size: 8.5px;
+            letter-spacing: 1.4px;
+            color: rgba(180,160,255,0.5);
+            text-transform: uppercase;
+            line-height: 1.6;
+        }
+
+        /* ── PILLAR GRID (how it works / why it matters) ── */
+        .pillar-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 700px) { .pillar-grid { grid-template-columns: 1fr; } }
+        .pillar-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px 32px;
+            position: relative;
+        }
+        .pillar-icon { font-size: 1.5rem; margin-bottom: 14px; display: block; }
+        .pillar-card h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.98rem;
+            font-weight: 800;
+            color: #f0eaff;
+            margin-bottom: 12px;
+            letter-spacing: 0.3px;
+        }
+        .pillar-card p {
+            font-size: 0.78rem;
+            line-height: 1.9;
+            color: rgba(200,190,240,0.68);
+        }
+        .pillar-card ul {
+            margin-top: 10px;
+            list-style: none;
+        }
+        .pillar-card li {
+            font-size: 0.74rem;
+            color: rgba(200,190,240,0.6);
+            line-height: 1.9;
+            padding-left: 16px;
+            position: relative;
+        }
+        .pillar-card li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            font-size: 6px;
+            top: 8px;
+            color: var(--mc, var(--q));
+        }
 
         /* ── TECH PILLS ── */
         .tech-row {
@@ -454,6 +544,12 @@ Gemini in Workspace can make mistakes. Learn more
         @keyframes fadein { to { opacity:1; transform:translateY(0); } }
         .d1{animation-delay:.05s} .d2{animation-delay:.15s} .d3{animation-delay:.25s}
         .d4{animation-delay:.35s} .d5{animation-delay:.45s} .d6{animation-delay:.55s} .d7{animation-delay:.65s}
+
+        @media (prefers-reduced-motion: reduce) {
+            .fade-in, .qubit-orbit, .qubit-core, .avatar-ring::before, .guide-avatar::before, .hero-title .line2 {
+                animation: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -474,6 +570,20 @@ Gemini in Workspace can make mistakes. Learn more
         <p class="hero-sub">
             A student research project exploring true quantum randomness versus classical pseudo-random number generation, built with IBM Qiskit and real quantum hardware.
         </p>
+
+        <!-- SIGNATURE VISUAL: orbiting qubit with live-looking bit readout -->
+        <div class="qubit-signature">
+            <svg width="280" height="150" viewBox="0 0 280 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <g transform="translate(0,10)">
+                    <ellipse class="qubit-orbit o1" cx="140" cy="70" rx="95" ry="34" fill="none" stroke="#00d4ff" stroke-opacity="0.35" stroke-width="1"/>
+                    <ellipse class="qubit-orbit o2" cx="140" cy="70" rx="95" ry="34" fill="none" stroke="#a855f7" stroke-opacity="0.3" stroke-width="1" transform="rotate(60 140 70)"/>
+                    <ellipse class="qubit-orbit o3" cx="140" cy="70" rx="95" ry="34" fill="none" stroke="#e879f9" stroke-opacity="0.25" stroke-width="1" transform="rotate(120 140 70)"/>
+                    <circle class="qubit-core" cx="140" cy="70" r="7" fill="#00d4ff"/>
+                    <circle cx="140" cy="70" r="14" fill="none" stroke="#00d4ff" stroke-opacity="0.4" stroke-width="1"/>
+                </g>
+                <text x="140" y="140" text-anchor="middle" class="bit-readout">|ψ⟩ → 1 0 1 1 0 0 1 0 1 1 0 1 0 0 1</text>
+            </svg>
+        </div>
     </section>
 
     <!-- PROJECT OVERVIEW -->
@@ -489,8 +599,53 @@ Gemini in Workspace can make mistakes. Learn more
             The <strong>Quantum Random Number Generator Hub</strong> is an interactive web platform that bridges quantum computing theory and hands-on understanding. By connecting to <strong>IBM Quantum hardware via Qiskit</strong>, the platform generates genuinely unpredictable numbers rooted in quantum mechanical uncertainty — something no classical computer can truly replicate.
         </p>
         <p>
-            Classical computers use deterministic algorithms like <strong>Linear Congruential Generators (LCG)</strong> that only appear random. Quantum randomness exploits the fundamental <strong>superposition and measurement collapse</strong> of qubits — making each result provably unpredictable, with deep implications for cryptography, security, and scientific simulation.
+            Classical computers use deterministic algorithms like <strong>Linear Congruential Generators (LCG)</strong> that only appear random: given the same seed, they will always reproduce the same sequence. This makes them fast and reproducible, but fundamentally predictable if the internal state is ever known. Quantum randomness works differently — it exploits the fundamental <strong>superposition and measurement collapse</strong> of qubits, so the outcome of a measurement is not merely hard to predict, it is provably undetermined until the moment it's observed.
         </p>
+        <p>
+            QRNG Hub was built to make that distinction tangible rather than abstract. Instead of reading about quantum uncertainty in a textbook, visitors can put a qubit into superposition, measure it on real IBM quantum hardware, and watch the classical and quantum generators produce their sequences side by side — then run standard <strong>NIST statistical randomness tests</strong> to see how each holds up under scrutiny.
+        </p>
+        <div class="stat-strip">
+            <div class="stat-box">
+                <div class="stat-num">2</div>
+                <div class="stat-label">Generator Modes<br>Classical &amp; Quantum</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num">1</div>
+                <div class="stat-label">Qubit In<br>Superposition</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num">IBM Q</div>
+                <div class="stat-label">Real Quantum<br>Hardware Backend</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num">NIST</div>
+                <div class="stat-label">Statistical Test<br>Suite Applied</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS / WHY IT MATTERS -->
+    <div class="pillar-grid fade-in d3">
+        <div class="pillar-card" style="--mc:#00d4ff;">
+            <span class="pillar-icon">🔬</span>
+            <h3>How It Works</h3>
+            <p>Each request routes to one of two very different engines behind a single interface:</p>
+            <ul>
+                <li><strong style="color:#e0d4ff;">Classical path</strong> — a seeded LCG computes the next value with simple arithmetic, deterministic and instant.</li>
+                <li><strong style="color:#e0d4ff;">Quantum path</strong> — a Flask/Python backend builds a Qiskit circuit, puts a qubit into superposition, and sends it to IBM Quantum hardware for measurement.</li>
+                <li>Results stream back through a REST API and render live with Chart.js and the Canvas API.</li>
+            </ul>
+        </div>
+        <div class="pillar-card" style="--mc:#a855f7;">
+            <span class="pillar-icon">🌐</span>
+            <h3>Why It Matters</h3>
+            <p>Randomness quality isn't academic trivia — it underpins real systems:</p>
+            <ul>
+                <li><strong style="color:#e0d4ff;">Cryptography</strong> — predictable keys are breakable keys; true randomness closes that gap.</li>
+                <li><strong style="color:#e0d4ff;">Security</strong> — tokens, nonces, and one-time pads all depend on unpredictability.</li>
+                <li><strong style="color:#e0d4ff;">Simulation</strong> — Monte Carlo methods and fair-chance systems (like the Lottery Gen demo) need generators free of hidden patterns.</li>
+            </ul>
+        </div>
     </div>
 
     <!-- TECH STACK -->

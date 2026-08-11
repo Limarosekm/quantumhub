@@ -30,7 +30,7 @@ class LCG:
 import string
 import random
 
-def generate_classical_passwords(count=500, length=12):
+def generate_classical_passwords(count=2000, length=12):
 
     characters = string.ascii_letters + string.digits + "!@#$%^&*"
 
